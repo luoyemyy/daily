@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FF2196F3</color>
+    <color name="colorPrimaryDark">#FF1976D2</color>
+    <color name="colorAccent">#FF2196F3</color>
+    <color name="background">#EDEDED</color>
+
+
+    <color name="white">#FFFFFF</color>
+    <color name="textPrimary">#FF333333</color>
+    <color name="textSuccess">#FF2196F3</color>
+</resources>

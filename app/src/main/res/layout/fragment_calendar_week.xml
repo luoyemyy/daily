@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="entity"
+            type="com.github.luoyemyy.daily.activity.calendar.Week" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+
+        <include
+            android:id="@+id/monday"
+            layout="@layout/fragment_calendar_day"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            bind:entity="@{entity.monday}" />
+
+        <include
+            android:id="@+id/tuesday"
+            layout="@layout/fragment_calendar_day"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            bind:entity="@{entity.tuesday}" />
+
+        <include
+            android:id="@+id/wednesday"
+            layout="@layout/fragment_calendar_day"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            bind:entity="@{entity.wednesday}" />
+
+        <include
+            android:id="@+id/thursday"
+            layout="@layout/fragment_calendar_day"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            bind:entity="@{entity.thursday}" />
+
+        <include
+            android:id="@+id/friday"
+            layout="@layout/fragment_calendar_day"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            bind:entity="@{entity.friday}" />
+
+        <include
+            android:id="@+id/saturday"
+            layout="@layout/fragment_calendar_day"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            bind:entity="@{entity.saturday}" />
+
+        <include
+            android:id="@+id/sunday"
+            layout="@layout/fragment_calendar_day"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            bind:entity="@{entity.sunday}" />
+
+    </LinearLayout>
+</layout>

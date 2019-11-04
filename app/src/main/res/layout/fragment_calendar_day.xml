@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="entity"
+            type="com.github.luoyemyy.daily.activity.calendar.Day" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@{entity.dayDesc()}"
+            android:textSize="16sp"
+            app:daily_text="@{entity.hasDaily}" />
+
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_today_not_write"
+            app:has_daily="@{entity.hasDaily}"
+            app:is_today="@{entity.today}" />
+
+    </RelativeLayout>
+
+</layout>
