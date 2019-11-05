@@ -61,7 +61,7 @@ class BackupGroupFragment : OverrideMenuFragment() {
                     BackupGroup(it.key, it.value).apply {
                         sync = checkBackupGroupSync(this)
                     }
-                }?.sortedBy { it.year * 100 + it.month }
+                }?.sortedByDescending { it.year * 100 + it.month }
             }
         }
 
