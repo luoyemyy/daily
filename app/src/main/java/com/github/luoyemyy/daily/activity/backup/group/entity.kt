@@ -29,7 +29,7 @@ class BackupGroup() : DataItem() {
         this.year = time / 10000
         this.month = (time - this.year * 10000) / 100
         this.name = "$year-${format(month)}"
-        this.files = files?.sortedBy { it.day }
+        this.files = files?.sortedBy { it.day }?.toMutableList()
         this.count = files?.size ?: 0
     }
 }

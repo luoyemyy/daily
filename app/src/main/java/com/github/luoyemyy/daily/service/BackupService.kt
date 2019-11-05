@@ -26,7 +26,7 @@ class BackupService : IntentService("BackupService") {
     private fun handleActionBackup(id: Long) {
         runOnThread {
             getRecordDao().get(id)?.also { record ->
-                needBackupMonth(record)
+                //                needBackupMonth(record)
                 record.toJsonString()?.also { json ->
                     saveBackup(json, getTime(record))
                 }
