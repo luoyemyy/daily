@@ -35,6 +35,11 @@ class BackupRecordFragment : OverrideMenuFragment() {
         }
 
         override fun onItemViewClick(binding: FragmentBackupRecordRecyclerBinding, vh: VH<*>, view: View) {
+            (getItem(vh.adapterPosition) as? BackupFile)?.apply {
+                if (!sync) {
+                    mPresenter.sync(this)
+                }
+            }
         }
     }
 
@@ -43,6 +48,14 @@ class BackupRecordFragment : OverrideMenuFragment() {
 
         override fun loadListData(bundle: Bundle?, paging: Paging, loadType: LoadType): List<BackupFile>? {
             return bundle?.getParcelableArrayList("files")
+        }
+
+        fun sync(backupFile: BackupFile) {
+
+        }
+
+        fun syncAll() {
+
         }
     }
 }
