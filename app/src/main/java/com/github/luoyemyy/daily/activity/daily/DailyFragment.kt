@@ -21,17 +21,14 @@ import com.github.luoyemyy.daily.db.getRecordDao
 import com.github.luoyemyy.daily.service.BackupService
 import com.github.luoyemyy.daily.util.BusEvent
 import com.github.luoyemyy.daily.util.UserInfo
+import com.github.luoyemyy.daily.util.formatDateNum
 
 class DailyFragment : OverrideMenuFragment() {
 
     private lateinit var mBinding: FragmentDailyBinding
     private lateinit var mPresenter: Presenter
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return FragmentDailyBinding.inflate(inflater, container, false).also { mBinding = it }.root
     }
 
@@ -91,7 +88,7 @@ class DailyFragment : OverrideMenuFragment() {
                 success.postValue(true)
                 return
             }
-            title.value = "$y-$m-$d"
+            title.value = "$y-${formatDateNum(m)}-${formatDateNum(d)}"
             runOnThread {
                 record = recordDao.get(id) ?: Record(0, UserInfo.getUser().id, d, m, y, "")
                 data.postValue(record)

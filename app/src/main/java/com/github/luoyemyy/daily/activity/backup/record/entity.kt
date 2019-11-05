@@ -3,6 +3,7 @@ package com.github.luoyemyy.daily.activity.backup.record
 import android.os.Parcel
 import android.os.Parcelable
 import com.github.luoyemyy.aclin.mvp.DataItem
+import com.github.luoyemyy.daily.util.formatDateNum
 
 
 class BackupFile() : DataItem(), Parcelable {
@@ -22,16 +23,8 @@ class BackupFile() : DataItem(), Parcelable {
         this.month = (time - this.year * 10000) / 100
         this.day = time - this.year * 10000 - this.month * 100
         this.groupName = (year * 10000 + month * 100).toString()
-        this.name = "$year-${format(month)}-${format(day)}"
+        this.name = "$year-${formatDateNum(month)}-${formatDateNum(day)}"
         this.isMonth = day == 0
-    }
-
-    private fun format(n: Int): String {
-        return if (n < 10) {
-            "0$n"
-        } else {
-            "$n"
-        }
     }
 
     constructor(parcel: Parcel) : this() {

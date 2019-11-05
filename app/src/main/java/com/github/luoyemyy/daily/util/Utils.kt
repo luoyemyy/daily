@@ -22,3 +22,11 @@ fun getBackupFile(time: Int): File? {
         }
     }
 }
+
+fun formatDateNum(n: Int): String {
+    return if (n < 10) {
+        "0$n"
+    } else {
+        "$n"
+    }
+}
