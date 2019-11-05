@@ -27,7 +27,11 @@ class DailyFragment : OverrideMenuFragment() {
     private lateinit var mBinding: FragmentDailyBinding
     private lateinit var mPresenter: Presenter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return FragmentDailyBinding.inflate(inflater, container, false).also { mBinding = it }.root
     }
 
@@ -103,7 +107,7 @@ class DailyFragment : OverrideMenuFragment() {
                 record.content = content
                 if (record.id == 0L) {
                     val rowId = recordDao.insert(record)
-                    recordDao.getOneByRowId(rowId)?.apply {
+                    recordDao.getByRowId(rowId)?.apply {
                         record.id = id
                     }
                 } else {
@@ -112,7 +116,7 @@ class DailyFragment : OverrideMenuFragment() {
 
                 postBus(BusEvent.DAILY_SAVE, longValue = record.id)
                 success.postValue(true)
-                BackupService.startActionBackup(mApp)
+                BackupService.startActionBackup(mApp, record.id)
             }
 
         }

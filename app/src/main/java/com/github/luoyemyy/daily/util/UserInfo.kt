@@ -17,4 +17,12 @@ object UserInfo {
     fun setAutoBackup(context: Context, auto: Boolean) {
         context.editor().putBoolean("auto-backup", auto).apply()
     }
+
+    fun nextBackupTime(context: Context): Int {
+        return context.spf().getInt("next-backup-time", 0)
+    }
+
+    fun setNextBackupTime(context: Context, nextTime: Int) {
+        context.editor().putInt("next-backup-time", nextTime).apply()
+    }
 }

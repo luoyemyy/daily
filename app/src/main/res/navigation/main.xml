@@ -14,6 +14,9 @@
         <action
             android:id="@+id/action_calendarFragment_to_backupFragment"
             app:destination="@id/backupFragment" />
+        <action
+            android:id="@+id/action_calendarFragment_to_aclin_logger"
+            app:destination="@id/aclin_logger" />
     </fragment>
     <fragment
         android:id="@+id/dailyFragment"
@@ -22,5 +25,22 @@
     <fragment
         android:id="@+id/backupFragment"
         android:name="com.github.luoyemyy.daily.activity.backup.BackupFragment"
-        android:label="@string/backup" />
+        android:label="@string/backup" >
+        <action
+            android:id="@+id/action_backupFragment_to_backupGroupFragment"
+            app:destination="@id/backupGroupFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/backupGroupFragment"
+        android:name="com.github.luoyemyy.daily.activity.backup.group.BackupGroupFragment"
+        android:label="@string/backup_manager" >
+        <action
+            android:id="@+id/action_backupGroupFragment_to_backupRecordFragment"
+            app:destination="@id/backupRecordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/backupRecordFragment"
+        android:name="com.github.luoyemyy.daily.activity.backup.record.BackupRecordFragment"
+        android:label="@string/backup_manager" />
+    <include app:graph="@navigation/aclin_logger" />
 </navigation>

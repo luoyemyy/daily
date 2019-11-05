@@ -15,16 +15,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:padding="16dp">
-
+        android:orientation="vertical">
 
         <Switch
             android:id="@+id/switchAuto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/white"
             android:checked="@{entity.auto}"
-            android:text="@string/export_auto"
+            android:padding="16dp"
+            android:text="@string/backup_auto"
+            android:textColor="@color/textPrimary"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/txtManagerBackup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/white"
+            android:drawableEnd="@drawable/ic_arrow_right"
+            android:padding="16dp"
+            android:text="@string/backup_manager"
             android:textColor="@color/textPrimary"
             android:textSize="16sp" />
 

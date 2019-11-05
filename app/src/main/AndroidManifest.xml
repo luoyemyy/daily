@@ -16,7 +16,7 @@
         tools:ignore="GoogleAppIndexingWarning">
         <service
             android:name=".service.BackupService"
-            android:exported="false"></service>
+            android:exported="false"/>
 
         <activity android:name=".activity.MainActivity">
             <intent-filter>

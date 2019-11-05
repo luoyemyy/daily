@@ -37,8 +37,9 @@ class CalendarFragment : OverrideMenuFragment(), BusResult {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.export) {
-            findNavController().navigate(R.id.action_calendarFragment_to_backupFragment)
+        when (item.itemId) {
+            R.id.export -> findNavController().navigate(R.id.action_calendarFragment_to_backupFragment)
+            R.id.log -> findNavController().navigate(R.id.action_calendarFragment_to_aclin_logger)
         }
         return super.onOptionsItemSelected(item)
     }
@@ -48,6 +49,7 @@ class CalendarFragment : OverrideMenuFragment(), BusResult {
         mPresenter = getPresenter()
         mBinding.apply {
             recyclerView.setupLinear(Adapter())
+            recyclerView.setHasFixedSize(true)
         }
         setBus(this, BusEvent.DAILY_SAVE, this)
         mPresenter.loadInit(arguments)
@@ -170,7 +172,7 @@ class CalendarFragment : OverrideMenuFragment(), BusResult {
             val y = calendar.get(Calendar.YEAR)
             val m = calendar.get(Calendar.MONTH) + 1
             val map = mutableMapOf<Int, Record>()
-            recordDao.getAllByDate(UserInfo.getUser().id, y, m)?.also { list ->
+            recordDao.getListByMonth(UserInfo.getUser().id, y, m)?.also { list ->
                 list.forEach {
                     map[it.day] = it
                 }

@@ -3,4 +3,8 @@
     <item
         android:id="@+id/export"
         android:title="@string/backup" />
+
+    <item
+        android:id="@+id/log"
+        android:title="@string/logger" />
 </menu>

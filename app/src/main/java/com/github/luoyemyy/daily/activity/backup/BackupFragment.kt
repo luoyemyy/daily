@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.github.luoyemyy.aclin.fragment.OverrideMenuFragment
 import com.github.luoyemyy.aclin.mvp.AbsPresenter
 import com.github.luoyemyy.aclin.mvp.getPresenter
@@ -18,7 +19,7 @@ import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.databinding.FragmentBackupBinding
 import com.github.luoyemyy.daily.util.UserInfo
 
-class BackupFragment : OverrideMenuFragment(), CompoundButton.OnCheckedChangeListener {
+class BackupFragment : OverrideMenuFragment(), CompoundButton.OnCheckedChangeListener, View.OnClickListener {
 
     private lateinit var mBinding: FragmentBackupBinding
     private lateinit var mPresenter: Presenter
@@ -33,12 +34,24 @@ class BackupFragment : OverrideMenuFragment(), CompoundButton.OnCheckedChangeLis
             mBinding.entity = it
         })
         mBinding.switchAuto.setOnCheckedChangeListener(this)
+        mBinding.txtManagerBackup.setOnClickListener(this)
         mPresenter.loadInit(arguments)
+    }
+
+    override fun onClick(v: View?) {
+        val permissionTip = getString(R.string.backup_permission_file)
+        requestPermission(this, permissionTip).granted {
+            findNavController().navigate(R.id.action_backupFragment_to_backupGroupFragment)
+        }.denied {
+            if (Manifest.permission.WRITE_EXTERNAL_STORAGE in it) {
+                PermissionManager.toSetting(this, permissionTip)
+            }
+        }.buildAndRequest(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 
     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
         if (isChecked) {
-            val permissionTip = getString(R.string.export_permission_file)
+            val permissionTip = getString(R.string.backup_permission_file)
             requestPermission(this, permissionTip).granted {
                 UserInfo.setAutoBackup(requireContext(), true)
             }.denied {
