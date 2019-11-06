@@ -13,8 +13,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <Switch
@@ -40,6 +39,15 @@
             android:text="@string/backup_manager"
             android:textColor="@color/textPrimary"
             android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:padding="16dp"
+            android:text="@string/backup_info"
+            android:textColor="@color/textHint"
+            android:textSize="12sp" />
 
     </LinearLayout>
 </layout>

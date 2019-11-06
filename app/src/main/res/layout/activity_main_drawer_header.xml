@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="176dp"
     android:background="@color/colorAccent"
     android:gravity="bottom"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp">
 
     <TextView
+        android:id="@+id/txtName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:hint="@string/user_hint_name_default"
         android:padding="16dp"
         android:textColor="@color/white"
-        android:textSize="24sp"
-        tools:text="大白" />
+        android:textColorHint="@color/textPrimaryHint"
+        android:textSize="28sp" />
 
     <TextView
+        android:id="@+id/txtMoments"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:hint="@string/user_hint_moments_default"
         android:padding="16dp"
         android:textColor="@color/white"
-        android:textSize="16sp"
-        tools:text="记录每天的生活状态和一些转瞬即逝的想法，发现自己，认识自己" />
+        android:textColorHint="@color/textPrimaryHint"
+        android:textSize="16sp" />
 
 </LinearLayout>

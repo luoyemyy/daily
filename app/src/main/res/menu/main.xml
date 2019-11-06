@@ -10,6 +10,15 @@
         android:title="@string/backup" />
 
     <item
+        android:id="@+id/user"
+        android:title="@string/user" />
+
+    <item
         android:id="@+id/aclin_logger"
         android:title="@string/logger" />
+
+    <item
+        android:id="@+id/about"
+        android:title="@string/about" />
+
 </menu>

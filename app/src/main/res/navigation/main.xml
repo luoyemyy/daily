@@ -37,4 +37,24 @@
         android:name="com.github.luoyemyy.daily.activity.backup.record.BackupRecordFragment"
         android:label="@string/backup_manager" />
     <include app:graph="@navigation/aclin_logger" />
+    <fragment
+        android:id="@+id/about"
+        android:name="com.github.luoyemyy.daily.activity.about.AboutFragment"
+        android:label="@string/about">
+        <action
+            android:id="@+id/action_about_to_aclin_logger"
+            app:destination="@id/aclin_logger" />
+    </fragment>
+    <fragment
+        android:id="@+id/user"
+        android:name="com.github.luoyemyy.daily.activity.user.UserFragment"
+        android:label="@string/user">
+        <action
+            android:id="@+id/action_user_to_userEdit"
+            app:destination="@id/userEdit" />
+    </fragment>
+    <fragment
+        android:id="@+id/userEdit"
+        android:name="com.github.luoyemyy.daily.activity.user.UserEditFragment"
+        android:label="" />
 </navigation>
