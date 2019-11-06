@@ -2,44 +2,38 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
-    app:startDestination="@id/calendarFragment">
+    app:startDestination="@id/calendar">
 
     <fragment
-        android:id="@+id/calendarFragment"
+        android:id="@+id/calendar"
         android:name="com.github.luoyemyy.daily.activity.calendar.CalendarFragment"
         android:label="@string/app_name">
         <action
-            android:id="@+id/action_calendarFragment_to_dailyFragment"
-            app:destination="@id/dailyFragment" />
-        <action
-            android:id="@+id/action_calendarFragment_to_backupFragment"
-            app:destination="@id/backupFragment" />
-        <action
-            android:id="@+id/action_calendarFragment_to_aclin_logger"
-            app:destination="@id/aclin_logger" />
+            android:id="@+id/action_calendar_to_daily"
+            app:destination="@id/daily" />
     </fragment>
     <fragment
-        android:id="@+id/dailyFragment"
+        android:id="@+id/daily"
         android:name="com.github.luoyemyy.daily.activity.daily.DailyFragment"
         android:label="@string/app_name" />
     <fragment
-        android:id="@+id/backupFragment"
+        android:id="@+id/backup"
         android:name="com.github.luoyemyy.daily.activity.backup.BackupFragment"
-        android:label="@string/backup" >
+        android:label="@string/backup">
         <action
-            android:id="@+id/action_backupFragment_to_backupGroupFragment"
-            app:destination="@id/backupGroupFragment" />
+            android:id="@+id/action_backup_to_backupGroup"
+            app:destination="@id/backupGroup" />
     </fragment>
     <fragment
-        android:id="@+id/backupGroupFragment"
+        android:id="@+id/backupGroup"
         android:name="com.github.luoyemyy.daily.activity.backup.group.BackupGroupFragment"
-        android:label="@string/backup_manager" >
+        android:label="@string/backup_manager">
         <action
-            android:id="@+id/action_backupGroupFragment_to_backupRecordFragment"
-            app:destination="@id/backupRecordFragment" />
+            android:id="@+id/action_backupGroup_to_backupRecord"
+            app:destination="@id/backupRecord" />
     </fragment>
     <fragment
-        android:id="@+id/backupRecordFragment"
+        android:id="@+id/backupRecord"
         android:name="com.github.luoyemyy.daily.activity.backup.record.BackupRecordFragment"
         android:label="@string/backup_manager" />
     <include app:graph="@navigation/aclin_logger" />

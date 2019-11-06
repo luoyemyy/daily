@@ -42,7 +42,7 @@ class BackupGroupFragment : OverrideMenuFragment() {
 
         override fun onItemViewClick(binding: FragmentBackupGroupRecyclerBinding, vh: VH<*>, view: View) {
             (getItem(vh.adapterPosition) as? BackupGroup)?.apply {
-                findNavController().navigate(R.id.action_backupGroupFragment_to_backupRecordFragment, bundleOf("files" to files))
+                findNavController().navigate(R.id.action_backupGroup_to_backupRecord, bundleOf("files" to files))
             }
         }
     }

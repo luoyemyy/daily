@@ -31,20 +31,6 @@ class CalendarFragment : OverrideMenuFragment(), BusResult {
         return FragmentCalendarBinding.inflate(inflater, container, false).also { mBinding = it }.root
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.main, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.export -> findNavController().navigate(R.id.action_calendarFragment_to_backupFragment)
-            R.id.log -> findNavController().navigate(R.id.action_calendarFragment_to_aclin_logger)
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mPresenter = getPresenter()
         mBinding.apply {
@@ -86,7 +72,7 @@ class CalendarFragment : OverrideMenuFragment(), BusResult {
                 binding.sunday.root -> week.sunday
                 else -> return
             }
-            findNavController().navigate(R.id.action_calendarFragment_to_dailyFragment, bundleOf("id" to day.id, "y" to day.year, "m" to day.month, "d" to day.day))
+            findNavController().navigate(R.id.action_calendar_to_daily, bundleOf("id" to day.id, "y" to day.year, "m" to day.month, "d" to day.day))
         }
     }
 

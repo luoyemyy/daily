@@ -14,9 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <service
-            android:name=".service.BackupService"
-            android:exported="false"/>
 
         <activity android:name=".activity.MainActivity">
             <intent-filter>
@@ -25,6 +22,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".service.BackupService"
+            android:exported="false" />
+
     </application>
 
 </manifest>

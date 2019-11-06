@@ -41,7 +41,7 @@ class BackupFragment : OverrideMenuFragment(), CompoundButton.OnCheckedChangeLis
     override fun onClick(v: View?) {
         val permissionTip = getString(R.string.backup_permission_file)
         requestPermission(this, permissionTip).granted {
-            findNavController().navigate(R.id.action_backupFragment_to_backupGroupFragment)
+            findNavController().navigate(R.id.action_backup_to_backupGroup)
         }.denied {
             if (Manifest.permission.WRITE_EXTERNAL_STORAGE in it) {
                 PermissionManager.toSetting(this, permissionTip)
