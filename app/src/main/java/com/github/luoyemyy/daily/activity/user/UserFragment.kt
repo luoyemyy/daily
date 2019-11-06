@@ -39,7 +39,7 @@ class UserFragment : OverrideMenuFragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v) {
             mBinding.txtName -> bundleOf("type" to 1)
-            mBinding.txtMoments -> bundleOf("type" to 1)
+            mBinding.txtMoments -> bundleOf("type" to 2)
             else -> null
         }?.apply {
             findNavController().navigate(R.id.action_user_to_userEdit, this)
