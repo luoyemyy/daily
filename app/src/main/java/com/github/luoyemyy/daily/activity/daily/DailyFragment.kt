@@ -3,7 +3,6 @@ package com.github.luoyemyy.daily.activity.daily
 import android.app.Application
 import android.os.Bundle
 import android.view.*
-import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -18,10 +17,7 @@ import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.databinding.FragmentDailyBinding
 import com.github.luoyemyy.daily.db.entity.Record
 import com.github.luoyemyy.daily.db.getRecordDao
-import com.github.luoyemyy.daily.service.BackupService
-import com.github.luoyemyy.daily.util.BusEvent
-import com.github.luoyemyy.daily.util.UserInfo
-import com.github.luoyemyy.daily.util.formatDateNum
+import com.github.luoyemyy.daily.util.*
 
 class DailyFragment : OverrideMenuFragment() {
 
@@ -51,22 +47,16 @@ class DailyFragment : OverrideMenuFragment() {
                 setText(it.content)
                 setSelection(it.content.length)
                 requestFocus()
-                showSoftInput(this)
+                showSoftInput(requireActivity(), this)
             }
         })
         mPresenter.title.observe(this, Observer {
-            requireActivity().title = requireContext().getString(R.string.daily_title, it)
+            setToolbarTitle(requireActivity(), requireContext().getString(R.string.daily_title, it))
         })
         mPresenter.success.observe(this, Observer {
             findNavController().navigateUp()
         })
         mPresenter.loadInit(arguments)
-    }
-
-    private fun showSoftInput(view: View) {
-        requireActivity().getSystemService(InputMethodManager::class.java)?.apply {
-            showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
-        }
     }
 
     class Presenter(var mApp: Application) : AbsPresenter(mApp) {
@@ -90,7 +80,7 @@ class DailyFragment : OverrideMenuFragment() {
             }
             title.value = "$y-${formatDateNum(m)}-${formatDateNum(d)}"
             runOnThread {
-                record = recordDao.get(id) ?: Record(0, UserInfo.getUser().id, d, m, y, "")
+                record = recordDao.get(id) ?: Record(0, UserInfo.getUserId(mApp), d, m, y, "")
                 data.postValue(record)
             }
         }
@@ -103,17 +93,13 @@ class DailyFragment : OverrideMenuFragment() {
             runOnThread {
                 record.content = content
                 if (record.id == 0L) {
-                    val rowId = recordDao.insert(record)
-                    recordDao.getByRowId(rowId)?.apply {
-                        record.id = id
-                    }
+                    recordDao.insert(record)
                 } else {
                     recordDao.update(record)
                 }
-
+                backupDay(record)
                 postBus(BusEvent.DAILY_SAVE, longValue = record.id)
                 success.postValue(true)
-                BackupService.startActionBackup(mApp, record.id)
             }
 
         }

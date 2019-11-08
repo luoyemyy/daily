@@ -2,8 +2,9 @@ package com.github.luoyemyy.daily.activity.calendar
 
 import android.app.Application
 import android.os.Bundle
-import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.github.luoyemyy.aclin.bus.BusMsg
@@ -76,7 +77,7 @@ class CalendarFragment : OverrideMenuFragment(), BusResult {
         }
     }
 
-    class Presenter(mApp: Application) : AbsListPresenter(mApp) {
+    class Presenter(var mApp: Application) : AbsListPresenter(mApp) {
 
         private var today: Triple<Int, Int, Int>
         private val recordDao: RecordDao = getRecordDao()
@@ -158,7 +159,7 @@ class CalendarFragment : OverrideMenuFragment(), BusResult {
             val y = calendar.get(Calendar.YEAR)
             val m = calendar.get(Calendar.MONTH) + 1
             val map = mutableMapOf<Int, Record>()
-            recordDao.getListByMonth(UserInfo.getUser().id, y, m)?.also { list ->
+            recordDao.getListByMonthSortDay(UserInfo.getUserId(mApp), y, m)?.also { list ->
                 list.forEach {
                     map[it.day] = it
                 }
@@ -201,9 +202,6 @@ class CalendarFragment : OverrideMenuFragment(), BusResult {
             }
             weeks.forEach {
                 it.setValue()
-                if (!it.isTitle) {
-                    Log.e("Presenter", "getRecordsByMonth: ${it.min}-${it.max} ")
-                }
             }
             calendar.add(Calendar.MONTH, -1)
             return weeks

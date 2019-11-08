@@ -12,11 +12,11 @@
         android:id="@+id/txtName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/user_hint_name_default"
+        android:hint="@string/not_filled"
         android:padding="16dp"
         android:textColor="@color/white"
         android:textColorHint="@color/textPrimaryHint"
-        android:textSize="28sp" />
+        android:textSize="24sp" />
 
     <TextView
         android:id="@+id/txtMoments"

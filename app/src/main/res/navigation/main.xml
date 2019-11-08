@@ -21,21 +21,37 @@
         android:name="com.github.luoyemyy.daily.activity.backup.BackupFragment"
         android:label="@string/backup">
         <action
-            android:id="@+id/action_backup_to_backupGroup"
-            app:destination="@id/backupGroup" />
+            android:id="@+id/action_backup_to_backupYear"
+            app:destination="@id/backupYear" />
     </fragment>
     <fragment
-        android:id="@+id/backupGroup"
-        android:name="com.github.luoyemyy.daily.activity.backup.group.BackupGroupFragment"
+        android:id="@+id/backupYear"
+        android:name="com.github.luoyemyy.daily.activity.backup.year.BackupYearFragment"
         android:label="@string/backup_manager">
         <action
-            android:id="@+id/action_backupGroup_to_backupRecord"
-            app:destination="@id/backupRecord" />
+            android:id="@+id/action_backupYear_to_backupMonth"
+            app:destination="@id/backupMonth" />
     </fragment>
     <fragment
-        android:id="@+id/backupRecord"
-        android:name="com.github.luoyemyy.daily.activity.backup.record.BackupRecordFragment"
-        android:label="@string/backup_manager" />
+        android:id="@+id/backupMonth"
+        android:name="com.github.luoyemyy.daily.activity.backup.month.BackupMonthFragment"
+        android:label="@string/backup_manager">
+        <action
+            android:id="@+id/action_backupMonth_to_backupDay"
+            app:destination="@id/backupDay" />
+    </fragment>
+    <fragment
+        android:id="@+id/backupDay"
+        android:name="com.github.luoyemyy.daily.activity.backup.day.BackupDayFragment"
+        android:label="@string/backup_manager" >
+        <action
+            android:id="@+id/action_backupDay_to_backupDetail"
+            app:destination="@id/backupDetail" />
+    </fragment>
+    <fragment
+        android:id="@+id/backupDetail"
+        android:name="com.github.luoyemyy.daily.activity.backup.detail.BackupDetailFragment"
+        android:label="" />
     <include app:graph="@navigation/aclin_logger" />
     <fragment
         android:id="@+id/about"
@@ -57,4 +73,9 @@
         android:id="@+id/userEdit"
         android:name="com.github.luoyemyy.daily.activity.user.UserEditFragment"
         android:label="" />
+    <action
+        android:id="@+id/action_global_user"
+        app:destination="@id/user" />
+
+
 </navigation>

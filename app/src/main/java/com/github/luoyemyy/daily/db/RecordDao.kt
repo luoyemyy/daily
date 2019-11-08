@@ -21,6 +21,9 @@ interface RecordDao {
     @Query("select count(*) from record where userId = :userId and  year = :year and month = :month and day=:day")
     fun countByDate(userId: Long, year: Int, month: Int, day: Int): Long
 
+    @Query("select * from record where userId = :userId and  year = :year and month = :month and day=:day limit 1")
+    fun getByDate(userId: Long, year: Int, month: Int, day: Int): Record?
+
     @Query("select * from record where id=:id")
     fun get(id: Long): Record?
 
@@ -31,5 +34,11 @@ interface RecordDao {
     fun getAll(userId: Long): List<Record>?
 
     @Query("select * from record where userId = :userId and  year = :year and month = :month order by day asc")
+    fun getListByMonthSortDay(userId: Long, year: Int, month: Int): List<Record>?
+
+    @Query("select * from record where userId = :userId and  year = :year")
+    fun getListByYear(userId: Long, year: Int): List<Record>?
+
+    @Query("select * from record where userId = :userId and  year = :year and month = :month")
     fun getListByMonth(userId: Long, year: Int, month: Int): List<Record>?
 }

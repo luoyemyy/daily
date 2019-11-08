@@ -1,6 +1,7 @@
 package com.github.luoyemyy.daily.util
 
 import android.util.TypedValue
+import android.view.View
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.github.luoyemyy.daily.R
@@ -26,3 +27,14 @@ fun dailyText(textView: TextView, hasDaily: Boolean, isToday: Boolean) {
         textView.background = null
     }
 }
+
+@BindingAdapter("visibility")
+fun visibility(view: View, visible: Boolean) {
+    view.visibility = if (visible) {
+        View.VISIBLE
+    } else {
+        View.GONE
+    }
+}
+
+

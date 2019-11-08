@@ -5,8 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "user")
 data class User(
-    @PrimaryKey(autoGenerate = true) var id: Long,
-    var name: String?,
-    var headImage: String?,
-    var moments: String?
+        @PrimaryKey(autoGenerate = true) var id: Long,
+        var name: String,
+        var headImage: String
 )

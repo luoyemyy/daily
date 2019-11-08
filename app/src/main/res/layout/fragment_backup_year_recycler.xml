@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
             name="entity"
-            type="com.github.luoyemyy.daily.activity.backup.group.BackupGroup" />
+            type="com.github.luoyemyy.daily.activity.backup.year.BackupYear" />
     </data>
 
     <LinearLayout
@@ -19,23 +20,24 @@
 
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="@{entity.name}"
+            android:text="@{entity.name()}"
             android:textColor="@color/textPrimary"
             android:textSize="16sp"
-            tools:text="2019-10" />
+            tools:text="2019" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:drawableEnd="@drawable/ic_arrow_right"
             android:gravity="center_vertical"
-            android:text="@{entity.countDesc()}"
+            android:text="@{@string/backup_count_not_input(entity.countNotSync)}"
             android:textColor="@color/textHint"
             android:textSize="14sp"
-            tools:text="30" />
+            app:visibility="@{entity.countNotSync>0}"
+            tools:text="5条备份未同步" />
     </LinearLayout>
 
 </layout>
