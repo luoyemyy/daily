@@ -93,7 +93,10 @@ class DailyFragment : OverrideMenuFragment() {
             runOnThread {
                 record.content = content
                 if (record.id == 0L) {
-                    recordDao.insert(record)
+                    val rowId = recordDao.insert(record)
+                    recordDao.getByRowId(rowId)?.apply {
+                        record.id = id
+                    }
                 } else {
                     recordDao.update(record)
                 }
