@@ -3,6 +3,7 @@ package com.github.luoyemyy.daily.activity.backup.day
 import android.os.Parcel
 import android.os.Parcelable
 import com.github.luoyemyy.aclin.mvp.DataItem
+import com.github.luoyemyy.daily.util.formatDate
 import com.github.luoyemyy.daily.util.formatDateNum
 
 
@@ -15,7 +16,7 @@ class BackupDay() : DataItem(), Parcelable {
     var path: String? = null
 
     fun name(): String {
-        return "$year-${formatDateNum(month)}-${formatDateNum(day)}"
+        return formatDate(year, month, day)
     }
 
     constructor(parcel: Parcel) : this() {

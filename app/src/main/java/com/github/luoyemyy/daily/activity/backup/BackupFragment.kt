@@ -1,6 +1,7 @@
 package com.github.luoyemyy.daily.activity.backup
 
 import android.Manifest
+import android.app.AlertDialog
 import android.app.Application
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +11,8 @@ import android.widget.CompoundButton
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.github.luoyemyy.aclin.ext.runOnThread
+import com.github.luoyemyy.aclin.ext.toast
 import com.github.luoyemyy.aclin.fragment.OverrideMenuFragment
 import com.github.luoyemyy.aclin.mvp.AbsPresenter
 import com.github.luoyemyy.aclin.mvp.getPresenter
@@ -17,7 +20,9 @@ import com.github.luoyemyy.aclin.permission.PermissionManager
 import com.github.luoyemyy.aclin.permission.requestPermission
 import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.databinding.FragmentBackupBinding
+import com.github.luoyemyy.daily.db.getRecordDao
 import com.github.luoyemyy.daily.util.UserInfo
+import com.github.luoyemyy.daily.util.verifyBackupYear
 
 class BackupFragment : OverrideMenuFragment(), CompoundButton.OnCheckedChangeListener, View.OnClickListener {
 
@@ -33,6 +38,9 @@ class BackupFragment : OverrideMenuFragment(), CompoundButton.OnCheckedChangeLis
         mPresenter.data.observe(this, Observer {
             mBinding.entity = it
         })
+        mPresenter.verify.observe(this, Observer {
+            requireActivity().toast(it)
+        })
         mBinding.switchAuto.setOnCheckedChangeListener(this)
         mBinding.txtManagerBackup.setOnClickListener(this)
         mPresenter.loadInit(arguments)
@@ -43,6 +51,7 @@ class BackupFragment : OverrideMenuFragment(), CompoundButton.OnCheckedChangeLis
         requestPermission(this, permissionTip).granted {
             when (v) {
                 mBinding.txtManagerBackup -> findNavController().navigate(R.id.action_backup_to_backupYear)
+                mBinding.txtVerifyBackup -> mPresenter.verifyAll()
             }
         }.denied {
             if (Manifest.permission.WRITE_EXTERNAL_STORAGE in it) {
@@ -71,6 +80,7 @@ class BackupFragment : OverrideMenuFragment(), CompoundButton.OnCheckedChangeLis
     class Presenter(var mApp: Application) : AbsPresenter(mApp) {
 
         val data = MutableLiveData<BackupBean>()
+        val verify = MutableLiveData<String>()
         private val backup = BackupBean()
 
         override fun loadData(bundle: Bundle?) {
@@ -80,6 +90,18 @@ class BackupFragment : OverrideMenuFragment(), CompoundButton.OnCheckedChangeLis
         fun updateAutoBackup(auto: Boolean) {
             backup.auto = auto
             data.postValue(backup)
+        }
+        fun verifyAll() {
+            runOnThread {
+                val list= getRecordDao().getListByGroupYear(UserInfo.getUserId(mApp))?.map {
+                    verifyBackupYear(mApp, it.year)
+                }?.filter { !it.isNullOrEmpty() }
+                if (list.isNullOrEmpty()) {
+                    verify.postValue(mApp.getString(R.string.backup_verify_success))
+                } else {
+                    verify.postValue(mApp.getString(R.string.backup_verify_append, list.size))
+                }
+            }
         }
     }
 

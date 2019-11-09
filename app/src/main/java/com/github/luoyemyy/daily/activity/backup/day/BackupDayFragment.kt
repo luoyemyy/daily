@@ -4,6 +4,8 @@ import android.app.Application
 import android.os.Bundle
 import android.view.*
 import androidx.core.os.bundleOf
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.github.luoyemyy.aclin.ext.runOnThread
 import com.github.luoyemyy.aclin.fragment.OverrideMenuFragment
@@ -12,6 +14,7 @@ import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.activity.backup.month.BackupMonth
 import com.github.luoyemyy.daily.databinding.FragmentBackupDayBinding
 import com.github.luoyemyy.daily.databinding.FragmentBackupDayRecyclerBinding
+import com.github.luoyemyy.daily.util.setToolbarTitle
 import com.github.luoyemyy.daily.util.syncDay
 import com.github.luoyemyy.daily.util.syncMonth
 
@@ -24,14 +27,12 @@ class BackupDayFragment : OverrideMenuFragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.backup_sync_verify, menu)
+        inflater.inflate(R.menu.backup_sync, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.sync) {
             mPresenter.syncAll()
-        } else if (item.itemId == R.id.verify) {
-            mPresenter.verifyAll()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -42,6 +43,9 @@ class BackupDayFragment : OverrideMenuFragment() {
             recyclerView.setupLinear(Adapter())
             recyclerView.setHasFixedSize(true)
         }
+        mPresenter.title.observe(this, Observer {
+            setToolbarTitle(requireActivity(), it)
+        })
         mPresenter.loadInit(arguments)
     }
 
@@ -67,10 +71,12 @@ class BackupDayFragment : OverrideMenuFragment() {
 
     class Presenter(var mApp: Application) : AbsListPresenter(mApp) {
 
+        val title = MutableLiveData<String>()
         private var backupMonth: BackupMonth? = null
 
         override fun loadListData(bundle: Bundle?, paging: Paging, loadType: LoadType): List<BackupDay>? {
             return bundle?.getParcelable<BackupMonth>("month")?.let {
+                title.value = mApp.getString(R.string.backup_manager_month, it.year,it.month)
                 backupMonth = it
                 it.days
             }
@@ -82,10 +88,6 @@ class BackupDayFragment : OverrideMenuFragment() {
                     syncMonth(mApp, year, month)
                 }
             }
-        }
-
-        fun verifyAll() {
-
         }
 
         fun sync(backupDay: BackupDay) {
@@ -104,7 +106,6 @@ class BackupDayFragment : OverrideMenuFragment() {
                     }
                 }
             }
-
         }
     }
 }

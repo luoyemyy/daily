@@ -39,6 +39,9 @@ interface RecordDao {
     @Query("select * from record where userId = :userId and  year = :year")
     fun getListByYear(userId: Long, year: Int): List<Record>?
 
+    @Query("select * from record where userId = :userId group by year")
+    fun getListByGroupYear(userId: Long): List<Record>?
+
     @Query("select * from record where userId = :userId and  year = :year and month = :month")
     fun getListByMonth(userId: Long, year: Int, month: Int): List<Record>?
 }

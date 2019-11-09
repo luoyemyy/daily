@@ -40,6 +40,16 @@
             android:textColor="@color/textPrimary"
             android:textSize="16sp" />
 
+        <TextView
+            android:id="@+id/txtVerifyBackup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1px"
+            android:background="@color/white"
+            android:padding="16dp"
+            android:text="@string/backup_verify"
+            android:textColor="@color/textPrimary"
+            android:textSize="16sp" />
 
         <TextView
             android:layout_width="match_parent"
