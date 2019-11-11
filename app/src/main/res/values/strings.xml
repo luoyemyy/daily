@@ -20,8 +20,9 @@
     <string name="backup_info">tip：备份日记不会随app卸载而删除，下次安装时可以重新恢复日记</string>
     <string name="backup_permission_file">备份日记需要读写文件系统的权限</string>
     <string name="backup_manager">管理备份</string>
-    <string name="backup_manager_year">管理备份_%d年</string>
-    <string name="backup_manager_month">管理备份_%d年%d月</string>
+    <string name="backup_manager_prefix">管理备份_</string>
+    <string name="backup_manager_year">%d年</string>
+    <string name="backup_manager_month">%d年%d月</string>
 
     <string name="backup_input">导入备份</string>
     <string name="backup_input_tip">将%s的备份信息导入日志中</string>
@@ -29,8 +30,12 @@
     <string name="backup_detail_title">备份内容_%s</string>
 
     <string name="backup_verify">校验备份</string>
-    <string name="backup_verify_tip">校验%s的备份是否完整</string>
-    <string name="backup_verify_success">所有日记都已完全备份</string>
+    <string name="backup_verify_menu">校验</string>
+    <string name="backup_verify_name">%d年</string>
+    <string name="backup_verify_verify_time">最后校验时间：%s</string>
+    <string name="backup_verify_tip1">选择要校验的年份</string>
+    <string name="backup_verify_tip2">tip：选择要校验的年份（可多选），如果有未备份的日记，会自动完成备份</string>
+    <string name="backup_verify_success">已完全备份</string>
     <string name="backup_verify_append">已增加%d条备份</string>
 
     <string name="daily_title">日记_%s</string>

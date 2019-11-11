@@ -49,6 +49,7 @@
             android:padding="16dp"
             android:text="@string/backup_verify"
             android:textColor="@color/textPrimary"
+            android:drawableEnd="@drawable/ic_arrow_right"
             android:textSize="16sp" />
 
         <TextView

@@ -23,6 +23,9 @@
         <action
             android:id="@+id/action_backup_to_backupYear"
             app:destination="@id/backupYear" />
+        <action
+            android:id="@+id/action_backup_to_backupVerify"
+            app:destination="@id/backupVerify" />
     </fragment>
     <fragment
         android:id="@+id/backupYear"
@@ -76,6 +79,10 @@
     <action
         android:id="@+id/action_global_user"
         app:destination="@id/user" />
+    <fragment
+        android:id="@+id/backupVerify"
+        android:name="com.github.luoyemyy.daily.activity.backup.verify.BackupVerifyFragment"
+        android:label="@string/backup_verify" />
 
 
 </navigation>

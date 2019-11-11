@@ -22,13 +22,8 @@ class BackupMonthFragment : OverrideMenuFragment() {
     private lateinit var mBinding: FragmentBackupMonthBinding
     private lateinit var mPresenter: Presenter
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return FragmentBackupMonthBinding.inflate(inflater, container, false).also { mBinding = it }
-            .root
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return FragmentBackupMonthBinding.inflate(inflater, container, false).also { mBinding = it }.root
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -37,12 +32,9 @@ class BackupMonthFragment : OverrideMenuFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.sync) {
-            requireActivity().confirm(
-                title = getString(R.string.backup_input),
-                message = getString(R.string.backup_input_tip, mPresenter.getTipName()),
-                ok = {
-                    mPresenter.syncAll()
-                })
+            requireActivity().confirm(title = getString(R.string.backup_input), message = getString(R.string.backup_input_tip, mPresenter.getTipName()), ok = {
+                mPresenter.syncAll()
+            })
         }
         return super.onOptionsItemSelected(item)
     }
@@ -60,24 +52,14 @@ class BackupMonthFragment : OverrideMenuFragment() {
     }
 
 
-    inner class Adapter : FixedAdapter<BackupMonth, FragmentBackupMonthRecyclerBinding>(
-        this,
-        mPresenter.listLiveData
-    ) {
+    inner class Adapter : FixedAdapter<BackupMonth, FragmentBackupMonthRecyclerBinding>(this, mPresenter.listLiveData) {
         override fun getContentLayoutId(viewType: Int): Int {
             return R.layout.fragment_backup_month_recycler
         }
 
-        override fun onItemViewClick(
-            binding: FragmentBackupMonthRecyclerBinding,
-            vh: VH<*>,
-            view: View
-        ) {
+        override fun onItemViewClick(binding: FragmentBackupMonthRecyclerBinding, vh: VH<*>, view: View) {
             (getItem(vh.adapterPosition) as? BackupMonth)?.apply {
-                findNavController().navigate(
-                    R.id.action_backupMonth_to_backupDay,
-                    bundleOf("month" to this)
-                )
+                findNavController().navigate(R.id.action_backupMonth_to_backupDay, bundleOf("month" to this))
             }
         }
     }
@@ -87,20 +69,16 @@ class BackupMonthFragment : OverrideMenuFragment() {
         val title = MutableLiveData<String>()
         private var backupYear: BackupYear? = null
 
-        override fun loadListData(
-            bundle: Bundle?,
-            paging: Paging,
-            loadType: LoadType
-        ): List<BackupMonth>? {
+        override fun loadListData(bundle: Bundle?, paging: Paging, loadType: LoadType): List<BackupMonth>? {
             return bundle?.getParcelable<BackupYear>("year")?.let {
-                title.value = mApp.getString(R.string.backup_manager_year, it.year)
+                title.postValue(mApp.getString(R.string.backup_manager_prefix)+mApp.getString(R.string.backup_manager_year, it.year))
                 backupYear = it
                 it.months
             }
         }
 
         fun getTipName(): String {
-            return backupYear?.name() + "年"
+            return mApp.getString(R.string.backup_manager_year, backupYear?.year ?: 0)
         }
 
         fun syncAll() {

@@ -7,6 +7,7 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.github.luoyemyy.aclin.ext.confirm
 import com.github.luoyemyy.aclin.ext.runOnThread
 import com.github.luoyemyy.aclin.fragment.OverrideMenuFragment
 import com.github.luoyemyy.aclin.mvp.*
@@ -32,7 +33,9 @@ class BackupDayFragment : OverrideMenuFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.sync) {
-            mPresenter.syncAll()
+            requireActivity().confirm(title = getString(R.string.backup_input), message = getString(R.string.backup_input_tip, mPresenter.getTipName()), ok = {
+                mPresenter.syncAll()
+            })
         }
         return super.onOptionsItemSelected(item)
     }
@@ -76,7 +79,7 @@ class BackupDayFragment : OverrideMenuFragment() {
 
         override fun loadListData(bundle: Bundle?, paging: Paging, loadType: LoadType): List<BackupDay>? {
             return bundle?.getParcelable<BackupMonth>("month")?.let {
-                title.value = mApp.getString(R.string.backup_manager_month, it.year,it.month)
+                title.postValue(mApp.getString(R.string.backup_manager_prefix) + mApp.getString(R.string.backup_manager_month, it.year, it.month))
                 backupMonth = it
                 it.days
             }
@@ -89,6 +92,13 @@ class BackupDayFragment : OverrideMenuFragment() {
                 }
             }
         }
+
+        fun getTipName(): String {
+            val year = backupMonth?.year ?: 0
+            val month = backupMonth?.month ?: 0
+            return mApp.getString(R.string.backup_manager_month, year, month)
+        }
+
 
         fun sync(backupDay: BackupDay) {
             runOnThread {

@@ -158,11 +158,3 @@ fun verifyBackupYear(context: Context, year: Int): List<Record>? {
         this.forEach { backupDay(it) }
     }
 }
-
-fun verifyBackupMonth(context: Context, year: Int, month: Int): List<Record>? {
-    return getRecordDao().getListByMonth(UserInfo.getUserId(context), year, month)?.filter {
-        getBackupDayFile(it.year, it.month, it.day) == null
-    }?.apply {
-        this.forEach { backupDay(it) }
-    }
-}
