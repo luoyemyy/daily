@@ -19,8 +19,9 @@ import com.github.luoyemyy.daily.databinding.FragmentCalendarWeekBinding
 import com.github.luoyemyy.daily.db.RecordDao
 import com.github.luoyemyy.daily.db.entity.Record
 import com.github.luoyemyy.daily.db.getRecordDao
+import com.github.luoyemyy.daily.util.AppCache
 import com.github.luoyemyy.daily.util.BusEvent
-import com.github.luoyemyy.daily.util.UserInfo
+import com.github.luoyemyy.daily.util.dayValue
 import java.util.*
 import kotlin.collections.set
 
@@ -39,12 +40,15 @@ class CalendarFragment : OverrideMenuFragment(), BusResult {
             recyclerView.setHasFixedSize(true)
         }
         setBus(this, BusEvent.DAILY_SAVE, this)
+        setBus(this, BusEvent.DAILY_IMPORT, this)
         mPresenter.loadInit(arguments)
     }
 
     override fun busResult(msg: BusMsg) {
         if (msg.event == BusEvent.DAILY_SAVE) {
             mPresenter.updateDaily(msg.longValue)
+        } else if (msg.event == BusEvent.DAILY_IMPORT) {
+            mPresenter.importDaily(msg.extra?.getIntegerArrayList("values") ?: listOf())
         }
     }
 
@@ -91,26 +95,44 @@ class CalendarFragment : OverrideMenuFragment(), BusResult {
             return getDatas()
         }
 
+        fun importDaily(values: List<Int>) {
+            runOnThread {
+                values.forEach {
+                    val year = it / 10000
+                    val month = it % 10000 / 100
+                    val day = it % 10000 % 100
+                    recordDao.getByDate(AppCache.getUserId(mApp), year, month, day)?.apply {
+                        updateBase(this)
+                    }
+                }
+            }
+        }
+
+        private fun updateBase(record: Record) {
+            val value = dayValue(record)
+            listLiveData.itemChange { list, _ ->
+                val week = list?.find {
+                    (it as? Week)?.let { week ->
+                        !week.isTitle && value >= week.min && value <= week.max
+                    } ?: false
+                } as? Week
+                if (week != null) {
+                    week.findDay(value)?.apply {
+                        this.id = record.id
+                        this.hasDaily = true
+                    }
+                    week.hasPayload()
+                    true
+                } else {
+                    false
+                }
+            }
+        }
+
         fun updateDaily(id: Long) {
             runOnThread {
-                val record = recordDao.get(id) ?: return@runOnThread
-                val value = record.year * 10000 + record.month * 100 + record.day
-                listLiveData.itemChange { list, _ ->
-                    val week = list?.find {
-                        (it as? Week)?.let { week ->
-                            !week.isTitle && value >= week.min && value <= week.max
-                        } ?: false
-                    } as? Week
-                    if (week != null) {
-                        week.findDay(value)?.apply {
-                            this.id = record.id
-                            this.hasDaily = true
-                        }
-                        week.hasPayload()
-                        true
-                    } else {
-                        false
-                    }
+                recordDao.get(id)?.apply {
+                    updateBase(this)
                 }
             }
         }
@@ -159,7 +181,7 @@ class CalendarFragment : OverrideMenuFragment(), BusResult {
             val y = calendar.get(Calendar.YEAR)
             val m = calendar.get(Calendar.MONTH) + 1
             val map = mutableMapOf<Int, Record>()
-            recordDao.getListByMonthSortDay(UserInfo.getUserId(mApp), y, m)?.also { list ->
+            recordDao.getListByMonthSortDay(AppCache.getUserId(mApp), y, m)?.also { list ->
                 list.forEach {
                     map[it.day] = it
                 }

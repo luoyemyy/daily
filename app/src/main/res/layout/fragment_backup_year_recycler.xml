@@ -33,7 +33,7 @@
             android:layout_height="match_parent"
             android:drawableEnd="@drawable/ic_arrow_right"
             android:gravity="center_vertical"
-            android:text="@{@string/backup_count_not_input(entity.countNotSync)}"
+            android:text="@{@string/backup_count_not_import(entity.countNotSync)}"
             android:textColor="@color/textHint"
             android:textSize="14sp"
             app:visibility="@{entity.countNotSync>0}"

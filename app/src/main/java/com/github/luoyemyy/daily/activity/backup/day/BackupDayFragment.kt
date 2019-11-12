@@ -7,14 +7,18 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.github.luoyemyy.aclin.bus.postBus
 import com.github.luoyemyy.aclin.ext.confirm
+import com.github.luoyemyy.aclin.ext.runOnMain
 import com.github.luoyemyy.aclin.ext.runOnThread
+import com.github.luoyemyy.aclin.ext.toast
 import com.github.luoyemyy.aclin.fragment.OverrideMenuFragment
 import com.github.luoyemyy.aclin.mvp.*
 import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.activity.backup.month.BackupMonth
 import com.github.luoyemyy.daily.databinding.FragmentBackupDayBinding
 import com.github.luoyemyy.daily.databinding.FragmentBackupDayRecyclerBinding
+import com.github.luoyemyy.daily.util.BusEvent
 import com.github.luoyemyy.daily.util.setToolbarTitle
 import com.github.luoyemyy.daily.util.syncDay
 import com.github.luoyemyy.daily.util.syncMonth
@@ -33,7 +37,7 @@ class BackupDayFragment : OverrideMenuFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.sync) {
-            requireActivity().confirm(title = getString(R.string.backup_input), message = getString(R.string.backup_input_tip, mPresenter.getTipName()), ok = {
+            requireActivity().confirm(title = getString(R.string.backup_import), message = getString(R.string.backup_import_tip, mPresenter.getTipName()), ok = {
                 mPresenter.syncAll()
             })
         }
@@ -88,7 +92,17 @@ class BackupDayFragment : OverrideMenuFragment() {
         fun syncAll() {
             runOnThread {
                 backupMonth?.apply {
-                    syncMonth(mApp, year, month)
+                    syncMonth(mApp, year, month).apply {
+                        if (this.isNotEmpty()) {
+                            updateItems(this)
+                            postBus(BusEvent.DAILY_IMPORT, extra = bundleOf("values" to this))
+                            postBus(BusEvent.IMPORT_DAY, intValue = month)
+                            postBus(BusEvent.IMPORT_MONTH, intValue = year)
+                            runOnMain { mApp.toast(mApp.getString(R.string.backup_import_tip2, this.size)) }
+                        } else {
+                            runOnMain { mApp.toast(mApp.getString(R.string.backup_import_tip1)) }
+                        }
+                    }
                 }
             }
         }
@@ -99,21 +113,25 @@ class BackupDayFragment : OverrideMenuFragment() {
             return mApp.getString(R.string.backup_manager_month, year, month)
         }
 
+        private fun updateItems(days: List<Int>) {
+            listLiveData.itemChange { list, _ ->
+                list?.forEach {
+                    (it as? BackupDay)?.apply {
+                        if (days.contains(value())) {
+                            sync = true
+                            hasPayload()
+                        }
+                    }
+                }
+                true
+            }
+        }
+
 
         fun sync(backupDay: BackupDay) {
             runOnThread {
                 syncDay(mApp, backupDay.year, backupDay.month, backupDay.day).apply {
-                    listLiveData.itemChange { list, _ ->
-                        list?.forEach {
-                            (it as? BackupDay)?.apply {
-                                if (this.name() == backupDay.name()) {
-                                    backupDay.sync = true
-                                    backupDay.hasPayload()
-                                }
-                            }
-                        }
-                        true
-                    }
+                    updateItems(listOf(backupDay.value()))
                 }
             }
         }

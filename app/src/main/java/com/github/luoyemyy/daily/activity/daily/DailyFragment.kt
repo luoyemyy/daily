@@ -80,7 +80,7 @@ class DailyFragment : OverrideMenuFragment() {
             }
             title.value = "$y-${formatDateNum(m)}-${formatDateNum(d)}"
             runOnThread {
-                record = recordDao.get(id) ?: Record(0, UserInfo.getUserId(mApp), d, m, y, "")
+                record = recordDao.get(id) ?: Record(0, AppCache.getUserId(mApp), d, m, y, "")
                 data.postValue(record)
             }
         }

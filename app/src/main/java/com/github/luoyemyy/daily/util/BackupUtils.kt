@@ -69,47 +69,58 @@ fun backupDay(record: Record) {
     }
 }
 
-fun syncYear(context: Context, year: Int) {
+fun syncYear(context: Context, year: Int): List<Int> {
+    val syncRecords = mutableListOf<Int>()
     getBackupYearDir(year)?.let {
         if (it.exists()) {
             it.list()?.forEach { month ->
                 if (month.isNumber()) {
-                    syncMonth(context, year, month.toInt())
+                    syncMonth(context, year, month.toInt()).apply {
+                        if (isNotEmpty()) {
+                            syncRecords.addAll(this)
+                        }
+                    }
                 }
             }
         }
     }
+    return syncRecords
 }
 
-fun syncMonth(context: Context, year: Int, month: Int) {
+fun syncMonth(context: Context, year: Int, month: Int): List<Int> {
+    val syncRecords = mutableListOf<Int>()
     getBackupMonthDir(year, month)?.let {
         if (it.exists()) {
             it.list()?.forEach { day ->
                 if (day.isNumber()) {
-                    syncDay(context, year, month, day.toInt())
+                    syncDay(context, year, month, day.toInt())?.apply {
+                        syncRecords.add(this)
+                    }
                 }
             }
         }
     }
+    return syncRecords
 }
 
-fun syncDay(context: Context, year: Int, month: Int, day: Int): Boolean {
-    val recordDao = getRecordDao()
-    getBackupDayFile(year, month, day)?.let {
-        if (it.exists()) {
-            FileReader(it).readText().let {
-                AesUtils.decrypt(it)
-            }.toObject<Record>()?.apply {
-                id = 0L
-                userId = UserInfo.getUserId(context)
-                recordDao.getByDate(userId, year, month, day) ?: let {
-                    recordDao.insert(this)
-                    return true
+fun syncDay(context: Context, year: Int, month: Int, day: Int): Int? {
+    val userId = AppCache.getUserId(context)
+    val record = getRecordDao().getByDate(userId, year, month, day)
+    if (record == null) {
+        getBackupDayFile(year, month, day)?.let { file ->
+            if (file.exists()) {
+                FileReader(file).readText().let {
+                    AesUtils.decrypt(it)
+                }.toObject<Record>()?.apply {
+                    this.id = 0L
+                    this.userId = userId
+                    getRecordDao().insert(this)
+                    return dayValue(this)
                 }
             }
         }
     }
-    return false
+    return null
 }
 
 fun getBackupYears(context: Context): List<BackupYear>? {
@@ -145,14 +156,14 @@ fun getBackupDays(context: Context, y: Int, m: Int): List<BackupDay>? {
                 month = m
                 day = it.toInt()
                 path = file.absolutePath
-                sync = getRecordDao().countByDate(UserInfo.getUserId(context), year, month, day) > 0
+                sync = getRecordDao().countByDate(AppCache.getUserId(context), year, month, day) > 0
             }
         }?.sortedBy { it.day }?.toMutableList()
     }
 }
 
 fun verifyBackupYear(context: Context, year: Int): List<Record>? {
-    return getRecordDao().getListByYear(UserInfo.getUserId(context), year)?.filter {
+    return getRecordDao().getListByYear(AppCache.getUserId(context), year)?.filter {
         getBackupDayFile(it.year, it.month, it.day) == null
     }?.apply {
         this.forEach { backupDay(it) }

@@ -14,7 +14,7 @@ import com.github.luoyemyy.aclin.mvp.getPresenter
 import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.databinding.FragmentUserEditBinding
 import com.github.luoyemyy.daily.util.BusEvent
-import com.github.luoyemyy.daily.util.UserInfo
+import com.github.luoyemyy.daily.util.AppCache
 import com.github.luoyemyy.daily.util.setToolbarTitle
 import com.github.luoyemyy.daily.util.showSoftInput
 
@@ -75,12 +75,12 @@ class UserEditFragment : OverrideMenuFragment() {
             }
             when (type) {
                 1 -> {
-                    userEdit.content = UserInfo.getUserName(mApp)
+                    userEdit.content = AppCache.getUserName(mApp)
                     userEdit.title = mApp.getString(R.string.user_edit_name)
                     userEdit.hint = mApp.getString(R.string.user_edit_name_hint)
                 }
                 2 -> {
-                    userEdit.content = UserInfo.getUserMoments(mApp)
+                    userEdit.content = AppCache.getUserMoments(mApp)
                     userEdit.title = mApp.getString(R.string.user_edit_moments)
                     userEdit.hint = mApp.getString(R.string.user_edit_moments_hint)
                 }
@@ -90,8 +90,8 @@ class UserEditFragment : OverrideMenuFragment() {
 
         fun save(content: String) {
             when (type) {
-                1 -> UserInfo.setUserName(mApp, content)
-                2 -> UserInfo.setUserMoments(mApp, content)
+                1 -> AppCache.setUserName(mApp, content)
+                2 -> AppCache.setUserMoments(mApp, content)
             }
             postBus(BusEvent.USER_CHANGE)
             userEdit.result = true

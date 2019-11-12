@@ -3,8 +3,10 @@ package com.github.luoyemyy.daily.util
 import android.content.Context
 import com.github.luoyemyy.aclin.ext.editor
 import com.github.luoyemyy.aclin.ext.spf
+import java.util.*
 
-object UserInfo {
+object AppCache {
+
     fun getUser(context: Context): User {
         return User(getUserId(context), getUserName(context), "", getUserMoments(context))
     }
@@ -37,11 +39,11 @@ object UserInfo {
         context.editor().putBoolean("auto-backup", auto).apply()
     }
 
-    fun nextBackupTime(context: Context): Int {
-        return context.spf().getInt("next-backup-time", 0)
+    fun getVerifyTime(context: Context, year: Int): Long {
+        return context.spf().getLong("verifyTime-${year}", 0L)
     }
 
-    fun setNextBackupTime(context: Context, nextTime: Int) {
-        context.editor().putInt("next-backup-time", nextTime).apply()
+    fun setVerifyTime(context: Context, year: Int, time: Date) {
+        context.editor().putLong("verifyTime-${year}", time.time).apply()
     }
 }

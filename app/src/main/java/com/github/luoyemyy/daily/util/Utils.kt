@@ -19,6 +19,10 @@ fun formatDate(record: Record): String {
     return formatDate(record.year, record.month, record.day)
 }
 
+fun dayValue(record: Record): Int {
+    return record.year * 10000 + record.month * 100 + record.day
+}
+
 
 fun setToolbarTitle(activity: Activity, title: String?) {
     (activity as? AppCompatActivity)?.supportActionBar?.title = title

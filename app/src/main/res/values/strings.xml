@@ -24,9 +24,11 @@
     <string name="backup_manager_year">%d年</string>
     <string name="backup_manager_month">%d年%d月</string>
 
-    <string name="backup_input">导入备份</string>
-    <string name="backup_input_tip">将%s的备份信息导入日志中</string>
-    <string name="backup_count_not_input">%d条备份未导入</string>
+    <string name="backup_import">导入备份</string>
+    <string name="backup_import_tip">将%s的备份信息导入日志中</string>
+    <string name="backup_import_tip1">已完全导入</string>
+    <string name="backup_import_tip2">%d条备份已导入</string>
+    <string name="backup_count_not_import">%d条备份未导入</string>
     <string name="backup_detail_title">备份内容_%s</string>
 
     <string name="backup_verify">校验备份</string>

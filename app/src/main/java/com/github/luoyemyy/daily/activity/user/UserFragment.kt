@@ -19,7 +19,7 @@ import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.databinding.FragmentUserBinding
 import com.github.luoyemyy.daily.util.BusEvent
 import com.github.luoyemyy.daily.util.User
-import com.github.luoyemyy.daily.util.UserInfo
+import com.github.luoyemyy.daily.util.AppCache
 
 class UserFragment : OverrideMenuFragment(), View.OnClickListener, BusResult {
 
@@ -64,7 +64,7 @@ class UserFragment : OverrideMenuFragment(), View.OnClickListener, BusResult {
         }
 
         fun fillData() {
-            data.value = UserInfo.getUser(mApp)
+            data.value = AppCache.getUser(mApp)
         }
     }
 

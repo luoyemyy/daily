@@ -4,7 +4,6 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.github.luoyemyy.aclin.mvp.DataItem
 import com.github.luoyemyy.daily.util.formatDate
-import com.github.luoyemyy.daily.util.formatDateNum
 
 
 class BackupDay() : DataItem(), Parcelable {
@@ -17,6 +16,10 @@ class BackupDay() : DataItem(), Parcelable {
 
     fun name(): String {
         return formatDate(year, month, day)
+    }
+
+    fun value(): Int {
+        return year * 10000 + month * 100 + day
     }
 
     constructor(parcel: Parcel) : this() {

@@ -22,7 +22,7 @@ import com.github.luoyemyy.aclin.ext.hideKeyboard
 import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.databinding.ActivityMainBinding
 import com.github.luoyemyy.daily.util.BusEvent
-import com.github.luoyemyy.daily.util.UserInfo
+import com.github.luoyemyy.daily.util.AppCache
 
 class MainActivity : AppCompatActivity(), BusResult, View.OnClickListener {
 
@@ -72,8 +72,8 @@ class MainActivity : AppCompatActivity(), BusResult, View.OnClickListener {
 
     private fun setUserInfo() {
         mHeadView?.apply {
-            findViewById<TextView>(R.id.txtName).text = UserInfo.getUserName(this@MainActivity)
-            findViewById<TextView>(R.id.txtMoments).text = UserInfo.getUserMoments(this@MainActivity)
+            findViewById<TextView>(R.id.txtName).text = AppCache.getUserName(this@MainActivity)
+            findViewById<TextView>(R.id.txtMoments).text = AppCache.getUserMoments(this@MainActivity)
         }
     }
 
