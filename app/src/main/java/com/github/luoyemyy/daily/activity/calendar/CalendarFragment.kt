@@ -2,9 +2,7 @@ package com.github.luoyemyy.daily.activity.calendar
 
 import android.app.Application
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.github.luoyemyy.aclin.bus.BusMsg
@@ -31,6 +29,17 @@ class CalendarFragment : OverrideMenuFragment(), BusResult {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return FragmentCalendarBinding.inflate(inflater, container, false).also { mBinding = it }.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.calendar, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.read) {
+            findNavController().navigate(R.id.action_calendar_to_read)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

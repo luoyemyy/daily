@@ -6,6 +6,10 @@
         android:title="@string/app_name" />
 
     <item
+        android:id="@+id/read"
+        android:title="@string/read" />
+
+    <item
         android:id="@+id/backup"
         android:title="@string/backup" />
 

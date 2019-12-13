@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:id="@+id/seekLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:background="#50ffffff"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtMonth1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="1" />
+
+        <TextView
+            android:id="@+id/txtMonth2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="2" />
+
+        <TextView
+            android:id="@+id/txtMonth3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="3" />
+
+        <TextView
+            android:id="@+id/txtMonth4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="4" />
+
+        <TextView
+            android:id="@+id/txtMonth5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="5" />
+
+        <TextView
+            android:id="@+id/txtMonth6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="6" />
+
+        <TextView
+            android:id="@+id/txtMonth7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="7" />
+
+        <TextView
+            android:id="@+id/txtMonth8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="8" />
+
+        <TextView
+            android:id="@+id/txtMonth9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="9" />
+
+        <TextView
+            android:id="@+id/txtMonth10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="10" />
+
+        <TextView
+            android:id="@+id/txtMonth11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="11" />
+
+        <TextView
+            android:id="@+id/txtMonth12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="12" />
+
+
+    </LinearLayout>
+
+</layout>
