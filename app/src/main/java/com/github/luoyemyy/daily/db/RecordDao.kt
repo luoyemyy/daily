@@ -36,6 +36,9 @@ interface RecordDao {
     @Query("select * from record where userId=:userId and year=:year order by month desc, day desc")
     fun getByYear(userId: Long, year: Int): List<Record>?
 
+    @Query("select * from record where userId=:userId and year=:year group by month order by month desc")
+    fun getMonthByYear(userId: Long, year: Int): List<Record>?
+
     @Query("select * from record where userId = :userId and  year = :year and month = :month order by day asc")
     fun getListByMonthSortDay(userId: Long, year: Int, month: Int): List<Record>?
 
