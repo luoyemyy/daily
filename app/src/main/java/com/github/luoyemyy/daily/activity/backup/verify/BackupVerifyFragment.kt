@@ -14,6 +14,7 @@ import com.github.luoyemyy.aclin.mvp.core.LoadParams
 import com.github.luoyemyy.aclin.mvp.core.MvpPresenter
 import com.github.luoyemyy.aclin.mvp.core.VH
 import com.github.luoyemyy.aclin.mvp.ext.getPresenter
+import com.github.luoyemyy.aclin.mvp.ext.setupLinear
 import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.databinding.FragmentBackupVerifyBinding
 import com.github.luoyemyy.daily.databinding.FragmentBackupVerifyRecyclerBinding
@@ -46,7 +47,7 @@ class BackupVerifyFragment : OverrideMenuFragment() {
         Adapter().also {
             it.setup(this, mPresenter.listLiveData)
             mBinding.recyclerView.apply {
-                adapter = it
+                setupLinear(it)
                 setHasFixedSize(true)
             }
         }

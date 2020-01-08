@@ -18,6 +18,7 @@ import com.github.luoyemyy.aclin.mvp.core.ListLiveData
 import com.github.luoyemyy.aclin.mvp.core.MvpPresenter
 import com.github.luoyemyy.aclin.mvp.core.VH
 import com.github.luoyemyy.aclin.mvp.ext.getPresenter
+import com.github.luoyemyy.aclin.mvp.ext.setupLinear
 import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.activity.backup.year.BackupYear
 import com.github.luoyemyy.daily.databinding.FragmentBackupMonthBinding
@@ -53,7 +54,7 @@ class BackupMonthFragment : OverrideMenuFragment(), BusResult {
         Adapter().also {
             it.setup(this, mPresenter.listLiveData)
             mBinding.recyclerView.apply {
-                adapter = it
+                setupLinear(it)
                 setHasFixedSize(true)
             }
         }
