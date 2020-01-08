@@ -11,15 +11,15 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.github.luoyemyy.aclin.bus.BusMsg
 import com.github.luoyemyy.aclin.bus.BusResult
-import com.github.luoyemyy.aclin.bus.addBus
+import com.github.luoyemyy.aclin.bus.setBus
 import com.github.luoyemyy.aclin.fragment.OverrideMenuFragment
-import com.github.luoyemyy.aclin.mvp.AbsPresenter
-import com.github.luoyemyy.aclin.mvp.getPresenter
+import com.github.luoyemyy.aclin.mvp.core.MvpPresenter
+import com.github.luoyemyy.aclin.mvp.ext.getPresenter
 import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.databinding.FragmentUserBinding
+import com.github.luoyemyy.daily.util.AppCache
 import com.github.luoyemyy.daily.util.BusEvent
 import com.github.luoyemyy.daily.util.User
-import com.github.luoyemyy.daily.util.AppCache
 
 class UserFragment : OverrideMenuFragment(), View.OnClickListener, BusResult {
 
@@ -37,7 +37,7 @@ class UserFragment : OverrideMenuFragment(), View.OnClickListener, BusResult {
         })
         mBinding.txtName.setOnClickListener(this)
         mBinding.txtMoments.setOnClickListener(this)
-        addBus(this, BusEvent.USER_CHANGE, this)
+        setBus(this, BusEvent.USER_CHANGE)
         mPresenter.loadInit(arguments)
     }
 
@@ -55,7 +55,7 @@ class UserFragment : OverrideMenuFragment(), View.OnClickListener, BusResult {
         }
     }
 
-    class Presenter(var mApp: Application) : AbsPresenter(mApp) {
+    class Presenter(var mApp: Application) : MvpPresenter(mApp) {
 
         val data = MutableLiveData<User>()
 

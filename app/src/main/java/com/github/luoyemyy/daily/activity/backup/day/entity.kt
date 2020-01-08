@@ -2,11 +2,11 @@ package com.github.luoyemyy.daily.activity.backup.day
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.github.luoyemyy.aclin.mvp.DataItem
+import com.github.luoyemyy.aclin.mvp.core.MvpData
 import com.github.luoyemyy.daily.util.formatDate
 
 
-class BackupDay() : DataItem(), Parcelable {
+class BackupDay() : MvpData(), Parcelable {
 
     var year: Int = 0
     var month: Int = 0

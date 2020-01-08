@@ -2,10 +2,10 @@ package com.github.luoyemyy.daily.activity.backup.year
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.github.luoyemyy.aclin.mvp.DataItem
+import com.github.luoyemyy.aclin.mvp.core.MvpData
 import com.github.luoyemyy.daily.activity.backup.month.BackupMonth
 
-class BackupYear() : DataItem(), Parcelable {
+class BackupYear() : MvpData(), Parcelable {
     var year: Int = 0
     var countNotSync: Int = 0
     var months: List<BackupMonth>? = null

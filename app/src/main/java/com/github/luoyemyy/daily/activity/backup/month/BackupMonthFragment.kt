@@ -7,16 +7,17 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.github.luoyemyy.aclin.bus.BusMsg
-import com.github.luoyemyy.aclin.bus.BusResult
-import com.github.luoyemyy.aclin.bus.addBus
-import com.github.luoyemyy.aclin.bus.postBus
+import com.github.luoyemyy.aclin.bus.*
 import com.github.luoyemyy.aclin.ext.confirm
 import com.github.luoyemyy.aclin.ext.runOnMain
 import com.github.luoyemyy.aclin.ext.runOnThread
 import com.github.luoyemyy.aclin.ext.toast
 import com.github.luoyemyy.aclin.fragment.OverrideMenuFragment
-import com.github.luoyemyy.aclin.mvp.*
+import com.github.luoyemyy.aclin.mvp.adapter.FixedAdapter
+import com.github.luoyemyy.aclin.mvp.core.ListLiveData
+import com.github.luoyemyy.aclin.mvp.core.MvpPresenter
+import com.github.luoyemyy.aclin.mvp.core.VH
+import com.github.luoyemyy.aclin.mvp.ext.getPresenter
 import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.activity.backup.year.BackupYear
 import com.github.luoyemyy.daily.databinding.FragmentBackupMonthBinding
@@ -48,14 +49,18 @@ class BackupMonthFragment : OverrideMenuFragment(), BusResult {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mPresenter = getPresenter()
-        mBinding.apply {
-            recyclerView.setupLinear(Adapter())
-            recyclerView.setHasFixedSize(true)
+        mPresenter.busLiveData = getBusLiveData()
+        Adapter().also {
+            it.setup(this, mPresenter.listLiveData)
+            mBinding.recyclerView.apply {
+                adapter = it
+                setHasFixedSize(true)
+            }
         }
         mPresenter.title.observe(this, Observer {
             setToolbarTitle(requireActivity(), it)
         })
-        addBus(this, BusEvent.IMPORT_DAY, this)
+        setBus(this, BusEvent.IMPORT_DAY)
         mPresenter.loadInit(arguments)
     }
 
@@ -67,28 +72,38 @@ class BackupMonthFragment : OverrideMenuFragment(), BusResult {
         }
     }
 
-    inner class Adapter : FixedAdapter<BackupMonth, FragmentBackupMonthRecyclerBinding>(this, mPresenter.listLiveData) {
-        override fun getContentLayoutId(viewType: Int): Int {
-            return R.layout.fragment_backup_month_recycler
+    inner class Adapter : FixedAdapter<BackupMonth, FragmentBackupMonthRecyclerBinding>() {
+
+        override fun bindContentViewHolder(binding: FragmentBackupMonthRecyclerBinding, data: BackupMonth?, viewType: Int, position: Int) {
+            binding.apply {
+                entity = data
+                executePendingBindings()
+            }
+        }
+
+        override fun getContentBinding(viewType: Int, parent: ViewGroup): FragmentBackupMonthRecyclerBinding {
+            return FragmentBackupMonthRecyclerBinding.inflate(layoutInflater, parent, false)
         }
 
         override fun onItemViewClick(binding: FragmentBackupMonthRecyclerBinding, vh: VH<*>, view: View) {
-            (getItem(vh.adapterPosition) as? BackupMonth)?.apply {
+            getItem(vh.adapterPosition)?.apply {
                 findNavController().navigate(R.id.action_backupMonth_to_backupDay, bundleOf("month" to this))
             }
         }
     }
 
-    class Presenter(var mApp: Application) : AbsListPresenter(mApp) {
+    class Presenter(var mApp: Application) : MvpPresenter(mApp) {
 
+        val listLiveData = ListLiveData<BackupMonth>()
+        var busLiveData: BusLiveData? = null
         val title = MutableLiveData<String>()
         private var backupYear: BackupYear? = null
 
-        override fun loadListData(bundle: Bundle?, paging: Paging, loadType: LoadType): List<BackupMonth>? {
-            return bundle?.getParcelable<BackupYear>("year")?.let {
+        override fun loadData(bundle: Bundle?) {
+            bundle?.getParcelable<BackupYear>("year")?.also {
                 title.postValue(mApp.getString(R.string.backup_manager_prefix) + mApp.getString(R.string.backup_manager_year, it.year))
                 backupYear = it
-                it.months
+                listLiveData.loadStart(it.months)
             }
         }
 
@@ -103,13 +118,13 @@ class BackupMonthFragment : OverrideMenuFragment(), BusResult {
         private fun updateItems(condition: (BackupMonth) -> Boolean) {
             listLiveData.itemChange { list, _ ->
                 list?.forEach {
-                    (it as? BackupMonth)?.apply {
+                    it.data?.apply {
                         if (condition(this)) {
                             countNotSync = 0
                             days?.forEach { day ->
                                 day.sync = true
                             }
-                            hasPayload()
+                            it.hasPayload()
                         }
                     }
                 }
@@ -123,9 +138,11 @@ class BackupMonthFragment : OverrideMenuFragment(), BusResult {
                     syncYear(mApp, year).apply {
                         if (this.isNotEmpty()) {
                             updateItems { it.countNotSync > 0 }
-                            postBus(BusEvent.DAILY_IMPORT, extra = bundleOf("values" to this))
-                            postBus(BusEvent.IMPORT_MONTH, intValue = year)
-                            runOnMain { mApp.toast(mApp.getString(R.string.backup_import_tip2, this.size)) }
+                            runOnMain {
+                                busLiveData?.post(BusEvent.DAILY_IMPORT, extra = bundleOf("values" to this))
+                                busLiveData?.post(BusEvent.IMPORT_MONTH, intValue = year)
+                                mApp.toast(mApp.getString(R.string.backup_import_tip2, this.size))
+                            }
                         } else {
                             runOnMain { mApp.toast(mApp.getString(R.string.backup_import_tip1)) }
                         }

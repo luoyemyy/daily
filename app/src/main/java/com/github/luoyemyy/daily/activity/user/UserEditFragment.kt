@@ -9,12 +9,12 @@ import androidx.navigation.fragment.findNavController
 import com.github.luoyemyy.aclin.bus.postBus
 import com.github.luoyemyy.aclin.ext.hideKeyboard
 import com.github.luoyemyy.aclin.fragment.OverrideMenuFragment
-import com.github.luoyemyy.aclin.mvp.AbsPresenter
-import com.github.luoyemyy.aclin.mvp.getPresenter
+import com.github.luoyemyy.aclin.mvp.core.MvpPresenter
+import com.github.luoyemyy.aclin.mvp.ext.getPresenter
 import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.databinding.FragmentUserEditBinding
-import com.github.luoyemyy.daily.util.BusEvent
 import com.github.luoyemyy.daily.util.AppCache
+import com.github.luoyemyy.daily.util.BusEvent
 import com.github.luoyemyy.daily.util.setToolbarTitle
 import com.github.luoyemyy.daily.util.showSoftInput
 
@@ -34,6 +34,7 @@ class UserEditFragment : OverrideMenuFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.save) {
             mPresenter.save(mBinding.edtContent.text.toString())
+            postBus(BusEvent.USER_CHANGE)
             requireActivity().hideKeyboard()
         }
         return super.onOptionsItemSelected(item)
@@ -60,7 +61,7 @@ class UserEditFragment : OverrideMenuFragment() {
         mPresenter.loadInit(arguments)
     }
 
-    class Presenter(var mApp: Application) : AbsPresenter(mApp) {
+    class Presenter(var mApp: Application) : MvpPresenter(mApp) {
 
         val data = MutableLiveData<UserEdit>()
         private var type = 0
@@ -93,7 +94,6 @@ class UserEditFragment : OverrideMenuFragment() {
                 1 -> AppCache.setUserName(mApp, content)
                 2 -> AppCache.setUserMoments(mApp, content)
             }
-            postBus(BusEvent.USER_CHANGE)
             userEdit.result = true
             data.postValue(userEdit)
         }

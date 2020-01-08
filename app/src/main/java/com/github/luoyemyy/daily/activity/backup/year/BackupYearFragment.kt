@@ -9,9 +9,14 @@ import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.github.luoyemyy.aclin.bus.BusMsg
 import com.github.luoyemyy.aclin.bus.BusResult
-import com.github.luoyemyy.aclin.bus.addBus
+import com.github.luoyemyy.aclin.bus.setBus
 import com.github.luoyemyy.aclin.fragment.OverrideMenuFragment
-import com.github.luoyemyy.aclin.mvp.*
+import com.github.luoyemyy.aclin.mvp.adapter.FixedAdapter
+import com.github.luoyemyy.aclin.mvp.core.ListLiveData
+import com.github.luoyemyy.aclin.mvp.core.LoadParams
+import com.github.luoyemyy.aclin.mvp.core.MvpPresenter
+import com.github.luoyemyy.aclin.mvp.core.VH
+import com.github.luoyemyy.aclin.mvp.ext.getPresenter
 import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.databinding.FragmentBackupYearBinding
 import com.github.luoyemyy.daily.databinding.FragmentBackupYearRecyclerBinding
@@ -28,11 +33,14 @@ class BackupYearFragment : OverrideMenuFragment(), BusResult {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mPresenter = getPresenter()
-        mBinding.apply {
-            recyclerView.setupLinear(Adapter())
-            recyclerView.setHasFixedSize(true)
+        Adapter().also {
+            it.setup(this, mPresenter.listLiveData)
+            mBinding.recyclerView.apply {
+                adapter = it
+                setHasFixedSize(true)
+            }
         }
-        addBus(this, BusEvent.IMPORT_MONTH, this)
+        setBus(this, BusEvent.IMPORT_MONTH)
         mPresenter.loadInit(arguments)
     }
 
@@ -44,28 +52,42 @@ class BackupYearFragment : OverrideMenuFragment(), BusResult {
         }
     }
 
-    inner class Adapter : FixedAdapter<BackupYear, FragmentBackupYearRecyclerBinding>(this, mPresenter.listLiveData) {
-        override fun getContentLayoutId(viewType: Int): Int {
-            return R.layout.fragment_backup_year_recycler
+    inner class Adapter : FixedAdapter<BackupYear, FragmentBackupYearRecyclerBinding>() {
+        override fun bindContentViewHolder(binding: FragmentBackupYearRecyclerBinding, data: BackupYear?, viewType: Int, position: Int) {
+            binding.apply {
+                entity = data
+                executePendingBindings()
+            }
         }
 
+        override fun getContentBinding(viewType: Int, parent: ViewGroup): FragmentBackupYearRecyclerBinding {
+            return FragmentBackupYearRecyclerBinding.inflate(layoutInflater, parent, false)
+        }
+
+
         override fun onItemViewClick(binding: FragmentBackupYearRecyclerBinding, vh: VH<*>, view: View) {
-            (getItem(vh.adapterPosition) as? BackupYear)?.apply {
+            getItem(vh.adapterPosition)?.apply {
                 findNavController().navigate(R.id.action_backupYear_to_backupMonth, bundleOf("year" to this))
             }
         }
     }
 
-    class Presenter(private var mApp: Application) : AbsListPresenter(mApp) {
+    class Presenter(private var mApp: Application) : MvpPresenter(mApp) {
 
-        override fun loadListData(bundle: Bundle?, paging: Paging, loadType: LoadType): List<BackupYear>? {
-            return getBackupYears(mApp)
+        val listLiveData = object : ListLiveData<BackupYear>() {
+            override fun getData(loadParams: LoadParams): List<BackupYear>? {
+                return getBackupYears(mApp)
+            }
+        }
+
+        override fun loadData(bundle: Bundle?) {
+            listLiveData.loadStart()
         }
 
         fun updateItems(year: Int) {
             listLiveData.itemChange { list, _ ->
                 list?.forEach {
-                    (it as? BackupYear)?.apply {
+                    it.data?.apply {
                         if (this.year == year) {
                             countNotSync = 0
                             months?.forEach { month ->
@@ -74,7 +96,7 @@ class BackupYearFragment : OverrideMenuFragment(), BusResult {
                                     day.sync = true
                                 }
                             }
-                            hasPayload()
+                            it.hasPayload()
                         }
                     }
                 }

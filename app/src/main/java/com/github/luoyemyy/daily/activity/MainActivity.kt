@@ -16,13 +16,13 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.github.luoyemyy.aclin.bus.BusMsg
 import com.github.luoyemyy.aclin.bus.BusResult
-import com.github.luoyemyy.aclin.bus.addBus
+import com.github.luoyemyy.aclin.bus.setBus
 import com.github.luoyemyy.aclin.ext.autoCloseKeyboardAndClearFocus
 import com.github.luoyemyy.aclin.ext.hideKeyboard
 import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.databinding.ActivityMainBinding
-import com.github.luoyemyy.daily.util.BusEvent
 import com.github.luoyemyy.daily.util.AppCache
+import com.github.luoyemyy.daily.util.BusEvent
 
 class MainActivity : AppCompatActivity(), BusResult, View.OnClickListener {
 
@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity(), BusResult, View.OnClickListener {
         mHeadView?.setOnClickListener(this)
         mBinding.drawerLayout.addDrawerListener(drawerListener)
         setUserInfo()
-        addBus(this, BusEvent.USER_CHANGE, this)
+        setBus(this, BusEvent.USER_CHANGE)
     }
 
     private val drawerListener = object : DrawerLayout.SimpleDrawerListener() {

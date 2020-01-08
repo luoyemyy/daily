@@ -8,7 +8,12 @@ import com.github.luoyemyy.aclin.ext.runOnMain
 import com.github.luoyemyy.aclin.ext.runOnThread
 import com.github.luoyemyy.aclin.ext.toast
 import com.github.luoyemyy.aclin.fragment.OverrideMenuFragment
-import com.github.luoyemyy.aclin.mvp.*
+import com.github.luoyemyy.aclin.mvp.adapter.FixedAdapter
+import com.github.luoyemyy.aclin.mvp.core.ListLiveData
+import com.github.luoyemyy.aclin.mvp.core.LoadParams
+import com.github.luoyemyy.aclin.mvp.core.MvpPresenter
+import com.github.luoyemyy.aclin.mvp.core.VH
+import com.github.luoyemyy.aclin.mvp.ext.getPresenter
 import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.databinding.FragmentBackupVerifyBinding
 import com.github.luoyemyy.daily.databinding.FragmentBackupVerifyRecyclerBinding
@@ -38,17 +43,28 @@ class BackupVerifyFragment : OverrideMenuFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mPresenter = getPresenter()
-        mBinding.apply {
-            recyclerView.setupLinear(Adapter())
-            recyclerView.setHasFixedSize(true)
+        Adapter().also {
+            it.setup(this, mPresenter.listLiveData)
+            mBinding.recyclerView.apply {
+                adapter = it
+                setHasFixedSize(true)
+            }
         }
         mPresenter.loadInit(arguments)
     }
 
 
-    inner class Adapter : FixedAdapter<BackupVerify, FragmentBackupVerifyRecyclerBinding>(this, mPresenter.listLiveData) {
-        override fun getContentLayoutId(viewType: Int): Int {
-            return R.layout.fragment_backup_verify_recycler
+    inner class Adapter : FixedAdapter<BackupVerify, FragmentBackupVerifyRecyclerBinding>() {
+
+        override fun bindContentViewHolder(binding: FragmentBackupVerifyRecyclerBinding, data: BackupVerify?, viewType: Int, position: Int) {
+            binding.apply {
+                entity = data
+                executePendingBindings()
+            }
+        }
+
+        override fun getContentBinding(viewType: Int, parent: ViewGroup): FragmentBackupVerifyRecyclerBinding {
+            return FragmentBackupVerifyRecyclerBinding.inflate(layoutInflater, parent, false)
         }
 
         override fun bindItemEvents(binding: FragmentBackupVerifyRecyclerBinding, vh: VH<*>) {
@@ -60,17 +76,22 @@ class BackupVerifyFragment : OverrideMenuFragment() {
         }
     }
 
-    class Presenter(var mApp: Application) : AbsListPresenter(mApp) {
+    class Presenter(var mApp: Application) : MvpPresenter(mApp) {
 
-
-        override fun loadListData(bundle: Bundle?, paging: Paging, loadType: LoadType): List<BackupVerify>? {
-            return getRecordDao().getListByGroupYear(AppCache.getUserId(mApp))?.map {
-                BackupVerify().apply {
-                    year = it.year
-                    name = getName(it.year)
-                    verifyTime = getVerifyTime(it.year)
+        val listLiveData = object : ListLiveData<BackupVerify>() {
+            override fun getData(loadParams: LoadParams): List<BackupVerify>? {
+                return getRecordDao().getListByGroupYear(AppCache.getUserId(mApp))?.map {
+                    BackupVerify().apply {
+                        year = it.year
+                        name = getName(it.year)
+                        verifyTime = getVerifyTime(it.year)
+                    }
                 }
             }
+        }
+
+        override fun loadData(bundle: Bundle?) {
+            listLiveData.loadStart()
         }
 
         fun verify() {

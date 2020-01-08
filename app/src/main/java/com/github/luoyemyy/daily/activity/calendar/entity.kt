@@ -1,6 +1,6 @@
 package com.github.luoyemyy.daily.activity.calendar
 
-import com.github.luoyemyy.aclin.mvp.DataItem
+import com.github.luoyemyy.aclin.mvp.core.MvpData
 
 class Day(var id: Long, var hasDaily: Boolean, var year: Int, var month: Int, var day: Int) {
 
@@ -10,9 +10,7 @@ class Day(var id: Long, var hasDaily: Boolean, var year: Int, var month: Int, va
     constructor() : this(0, false, 0, 0, 0)
 
     fun today(year: Int, month: Int, day: Int) {
-        today = this.year == year
-                && this.month == month
-                && this.day == day
+        today = this.year == year && this.month == month && this.day == day
     }
 
     fun dayDesc(): String {
@@ -24,15 +22,7 @@ class Day(var id: Long, var hasDaily: Boolean, var year: Int, var month: Int, va
     }
 }
 
-data class Week(
-    var monday: Day,
-    var tuesday: Day,
-    var wednesday: Day,
-    var thursday: Day,
-    var friday: Day,
-    var saturday: Day,
-    var sunday: Day
-) : DataItem() {
+data class Week(var monday: Day, var tuesday: Day, var wednesday: Day, var thursday: Day, var friday: Day, var saturday: Day, var sunday: Day) : MvpData() {
 
     var min = 0
     var max = 0
@@ -44,15 +34,7 @@ data class Week(
     }
 
     fun setValue() {
-        listOf(
-            monday.value(),
-            tuesday.value(),
-            wednesday.value(),
-            thursday.value(),
-            friday.value(),
-            saturday.value(),
-            sunday.value()
-        ).filter { it > 0 }.apply {
+        listOf(monday.value(), tuesday.value(), wednesday.value(), thursday.value(), friday.value(), saturday.value(), sunday.value()).filter { it > 0 }.apply {
             min = this.min() ?: 0
             max = this.max() ?: 0
         }

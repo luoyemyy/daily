@@ -10,8 +10,8 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.github.luoyemyy.aclin.ext.toObject
 import com.github.luoyemyy.aclin.fragment.OverrideMenuFragment
-import com.github.luoyemyy.aclin.mvp.AbsPresenter
-import com.github.luoyemyy.aclin.mvp.getPresenter
+import com.github.luoyemyy.aclin.mvp.core.MvpPresenter
+import com.github.luoyemyy.aclin.mvp.ext.getPresenter
 import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.activity.backup.day.BackupDay
 import com.github.luoyemyy.daily.databinding.FragmentBackupDetailBinding
@@ -45,7 +45,7 @@ class BackupDetailFragment : OverrideMenuFragment() {
         mPresenter.loadInit(arguments)
     }
 
-    class Presenter(var mApp: Application) : AbsPresenter(mApp) {
+    class Presenter(var mApp: Application) : MvpPresenter(mApp) {
 
         val data = MutableLiveData<BackupDetail>()
         private val backupDetail = BackupDetail()

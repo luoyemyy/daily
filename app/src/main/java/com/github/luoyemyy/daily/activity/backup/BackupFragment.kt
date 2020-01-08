@@ -11,8 +11,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.github.luoyemyy.aclin.fragment.OverrideMenuFragment
-import com.github.luoyemyy.aclin.mvp.AbsPresenter
-import com.github.luoyemyy.aclin.mvp.getPresenter
+import com.github.luoyemyy.aclin.mvp.core.MvpPresenter
+import com.github.luoyemyy.aclin.mvp.ext.getPresenter
 import com.github.luoyemyy.aclin.permission.PermissionManager
 import com.github.luoyemyy.aclin.permission.requestPermission
 import com.github.luoyemyy.daily.R
@@ -70,7 +70,7 @@ class BackupFragment : OverrideMenuFragment(), CompoundButton.OnCheckedChangeLis
         }
     }
 
-    class Presenter(var mApp: Application) : AbsPresenter(mApp) {
+    class Presenter(var mApp: Application) : MvpPresenter(mApp) {
 
         val data = MutableLiveData<BackupBean>()
         private val backup = BackupBean()

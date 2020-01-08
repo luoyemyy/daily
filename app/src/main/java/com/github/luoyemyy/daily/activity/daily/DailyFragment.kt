@@ -8,11 +8,12 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.github.luoyemyy.aclin.bus.postBus
 import com.github.luoyemyy.aclin.ext.hideKeyboard
+import com.github.luoyemyy.aclin.ext.runOnMain
 import com.github.luoyemyy.aclin.ext.runOnThread
 import com.github.luoyemyy.aclin.ext.toast
 import com.github.luoyemyy.aclin.fragment.OverrideMenuFragment
-import com.github.luoyemyy.aclin.mvp.AbsPresenter
-import com.github.luoyemyy.aclin.mvp.getPresenter
+import com.github.luoyemyy.aclin.mvp.core.MvpPresenter
+import com.github.luoyemyy.aclin.mvp.ext.getPresenter
 import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.databinding.FragmentDailyBinding
 import com.github.luoyemyy.daily.db.entity.Record
@@ -34,7 +35,9 @@ class DailyFragment : OverrideMenuFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.save) {
-            mPresenter.save(mBinding.edtContent.text.toString())
+            mPresenter.save(mBinding.edtContent.text.toString()) {
+                postBus(BusEvent.DAILY_SAVE, longValue = it)
+            }
             requireActivity().hideKeyboard()
         }
         return super.onOptionsItemSelected(item)
@@ -59,7 +62,7 @@ class DailyFragment : OverrideMenuFragment() {
         mPresenter.loadInit(arguments)
     }
 
-    class Presenter(var mApp: Application) : AbsPresenter(mApp) {
+    class Presenter(var mApp: Application) : MvpPresenter(mApp) {
 
         private val recordDao = getRecordDao()
         private lateinit var record: Record
@@ -85,7 +88,7 @@ class DailyFragment : OverrideMenuFragment() {
             }
         }
 
-        fun save(content: String) {
+        fun save(content: String, callback: (Long) -> Unit) {
             if (content.isEmpty()) {
                 mApp.toast(R.string.daily_tip_empty_text)
                 return
@@ -101,8 +104,10 @@ class DailyFragment : OverrideMenuFragment() {
                     recordDao.update(record)
                 }
                 backupDay(record)
-                postBus(BusEvent.DAILY_SAVE, longValue = record.id)
                 success.postValue(true)
+                runOnMain {
+                    callback(record.id)
+                }
             }
 
         }

@@ -10,7 +10,13 @@ import com.github.luoyemyy.aclin.bus.BusResult
 import com.github.luoyemyy.aclin.bus.setBus
 import com.github.luoyemyy.aclin.ext.runOnThread
 import com.github.luoyemyy.aclin.fragment.OverrideMenuFragment
-import com.github.luoyemyy.aclin.mvp.*
+import com.github.luoyemyy.aclin.mvp.adapter.ReversedAdapter
+import com.github.luoyemyy.aclin.mvp.core.ListLiveData
+import com.github.luoyemyy.aclin.mvp.core.LoadParams
+import com.github.luoyemyy.aclin.mvp.core.MvpPresenter
+import com.github.luoyemyy.aclin.mvp.core.VH
+import com.github.luoyemyy.aclin.mvp.ext.getPresenter
+import com.github.luoyemyy.aclin.mvp.ext.setupLinear
 import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.databinding.FragmentCalendarBinding
 import com.github.luoyemyy.daily.databinding.FragmentCalendarWeekBinding
@@ -44,12 +50,14 @@ class CalendarFragment : OverrideMenuFragment(), BusResult {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mPresenter = getPresenter()
-        mBinding.apply {
-            recyclerView.setupLinear(Adapter())
-            recyclerView.setHasFixedSize(true)
+        Adapter().also {
+            it.setup(this, mPresenter.listLiveData)
+            mBinding.recyclerView.apply {
+                setupLinear(it)
+                setHasFixedSize(true)
+            }
         }
-        setBus(this, BusEvent.DAILY_SAVE, this)
-        setBus(this, BusEvent.DAILY_IMPORT, this)
+        setBus(this, BusEvent.DAILY_SAVE, BusEvent.DAILY_IMPORT)
         mPresenter.loadInit(arguments)
     }
 
@@ -61,13 +69,16 @@ class CalendarFragment : OverrideMenuFragment(), BusResult {
         }
     }
 
-    inner class Adapter : ReversedAdapter<Week, FragmentCalendarWeekBinding>(this, mPresenter.listLiveData) {
-        override fun getContentLayoutId(viewType: Int): Int {
-            return R.layout.fragment_calendar_week
+    inner class Adapter : ReversedAdapter<Week, FragmentCalendarWeekBinding>() {
+        override fun bindContentViewHolder(binding: FragmentCalendarWeekBinding, data: Week?, viewType: Int, position: Int) {
+            binding.apply {
+                entity = data
+                executePendingBindings()
+            }
         }
 
-        override fun pageSize(): Int {
-            return 1
+        override fun getContentBinding(viewType: Int, parent: ViewGroup): FragmentCalendarWeekBinding {
+            return FragmentCalendarWeekBinding.inflate(layoutInflater, parent, false)
         }
 
         override fun getItemClickViews(binding: FragmentCalendarWeekBinding): List<View> {
@@ -75,7 +86,7 @@ class CalendarFragment : OverrideMenuFragment(), BusResult {
         }
 
         override fun onItemViewClick(binding: FragmentCalendarWeekBinding, vh: VH<*>, view: View) {
-            val week = getItem(vh.adapterPosition) as? Week ?: return
+            val week = getItem(vh.adapterPosition) ?: return
             val day = when (view) {
                 binding.monday.root -> week.monday
                 binding.tuesday.root -> week.tuesday
@@ -90,7 +101,7 @@ class CalendarFragment : OverrideMenuFragment(), BusResult {
         }
     }
 
-    class Presenter(var mApp: Application) : AbsListPresenter(mApp) {
+    class Presenter(var mApp: Application) : MvpPresenter(mApp) {
 
         private var today: Triple<Int, Int, Int>
         private val recordDao: RecordDao = getRecordDao()
@@ -99,9 +110,14 @@ class CalendarFragment : OverrideMenuFragment(), BusResult {
             set(Calendar.DAY_OF_MONTH, 1) //设置为当月1号
             add(Calendar.MONTH, 1)
         }
+        val listLiveData = object : ListLiveData<Week>() {
+            override fun getData(loadParams: LoadParams): List<Week>? {
+                return getDatas()
+            }
+        }
 
-        override fun loadListData(bundle: Bundle?, paging: Paging, loadType: LoadType): List<Week>? {
-            return getDatas()
+        override fun loadData(bundle: Bundle?) {
+            listLiveData.loadStart()
         }
 
         fun importDaily(values: List<Int>) {
@@ -119,14 +135,14 @@ class CalendarFragment : OverrideMenuFragment(), BusResult {
 
         private fun updateBase(record: Record) {
             val value = dayValue(record)
-            listLiveData.itemChange { list, _ ->
-                val week = list?.find {
-                    (it as? Week)?.let { week ->
+            listLiveData.itemChange { itemList, dataList ->
+                val week = itemList?.find {
+                    it.data?.let { week ->
                         !week.isTitle && value >= week.min && value <= week.max
                     } ?: false
-                } as? Week
+                }
                 if (week != null) {
-                    week.findDay(value)?.apply {
+                    week.data?.findDay(value)?.apply {
                         this.id = record.id
                         this.hasDaily = true
                     }

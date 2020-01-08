@@ -7,7 +7,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.MutableLiveData
 import com.github.luoyemyy.aclin.ext.runOnThread
 import com.github.luoyemyy.aclin.fragment.OverrideMenuFragment
-import com.github.luoyemyy.aclin.mvp.*
+import com.github.luoyemyy.aclin.mvp.adapter.FixedAdapter
+import com.github.luoyemyy.aclin.mvp.core.ListLiveData
+import com.github.luoyemyy.aclin.mvp.core.LoadParams
+import com.github.luoyemyy.aclin.mvp.core.MvpPresenter
+import com.github.luoyemyy.aclin.mvp.core.VH
+import com.github.luoyemyy.aclin.mvp.ext.getPresenter
+import com.github.luoyemyy.aclin.mvp.ext.setupLinear
 import com.github.luoyemyy.daily.R
 import com.github.luoyemyy.daily.databinding.FragmentReadBinding
 import com.github.luoyemyy.daily.databinding.FragmentReadRecyclerBinding
@@ -40,9 +46,13 @@ class ReadFragment : OverrideMenuFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mPresenter = getPresenter()
-        mBinding.apply {
-            recyclerView.setupLinear(Adapter())
-            recyclerViewSeek.setupLinear(SeekAdapter())
+        Adapter().also {
+            it.setup(this, mPresenter.listLiveData)
+            mBinding.recyclerView.setupLinear(it)
+        }
+        SeekAdapter().also {
+            it.setup(this, mPresenter.seekLiveData)
+            mBinding.recyclerViewSeek.setupLinear(it)
         }
         mPresenter.title.observe(this, androidx.lifecycle.Observer {
             setToolbarTitle(requireActivity(), it)
@@ -56,22 +66,36 @@ class ReadFragment : OverrideMenuFragment() {
         })
         mPresenter.setTitle()
         mPresenter.loadInit(arguments)
-        mPresenter.seekLiveData.loadInit()
+        mPresenter.seekLiveData.loadStart()
     }
 
-    inner class Adapter : FixedAdapter<ReadDay, FragmentReadRecyclerBinding>(this, mPresenter.listLiveData) {
-        override fun getContentLayoutId(viewType: Int): Int {
-            return R.layout.fragment_read_recycler
+    inner class Adapter : FixedAdapter<ReadDay, FragmentReadRecyclerBinding>() {
+        override fun bindContentViewHolder(binding: FragmentReadRecyclerBinding, data: ReadDay?, viewType: Int, position: Int) {
+            binding.apply {
+                entity = data
+                executePendingBindings()
+            }
+        }
+
+        override fun getContentBinding(viewType: Int, parent: ViewGroup): FragmentReadRecyclerBinding {
+            return FragmentReadRecyclerBinding.inflate(layoutInflater, parent, false)
         }
     }
 
-    inner class SeekAdapter : FixedAdapter<SeekIndex, FragmentReadSeekRecyclerBinding>(this, mPresenter.seekLiveData) {
-        override fun getContentLayoutId(viewType: Int): Int {
-            return R.layout.fragment_read_seek_recycler
+    inner class SeekAdapter : FixedAdapter<SeekIndex, FragmentReadSeekRecyclerBinding>() {
+        override fun bindContentViewHolder(binding: FragmentReadSeekRecyclerBinding, data: SeekIndex?, viewType: Int, position: Int) {
+            binding.apply {
+                entity = data
+                executePendingBindings()
+            }
+        }
+
+        override fun getContentBinding(viewType: Int, parent: ViewGroup): FragmentReadSeekRecyclerBinding {
+            return FragmentReadSeekRecyclerBinding.inflate(layoutInflater, parent, false)
         }
 
         override fun onItemViewClick(binding: FragmentReadSeekRecyclerBinding, vh: VH<*>, view: View) {
-            (getItem(vh.adapterPosition) as? SeekIndex)?.apply {
+            getItem(vh.adapterPosition)?.apply {
                 val position = mPresenter.findIndexByMonth(this.month)
                 if (position >= 0) {
                     mBinding.recyclerView.scrollToPosition(position)
@@ -80,25 +104,31 @@ class ReadFragment : OverrideMenuFragment() {
         }
     }
 
-    class Presenter(var mApp: Application) : AbsListPresenter(mApp) {
+    class Presenter(var mApp: Application) : MvpPresenter(mApp) {
 
         private val recordDao: RecordDao = getRecordDao()
         private var year = Calendar.getInstance().get(Calendar.YEAR)
         var title = MutableLiveData<String>()
         var selectYear = MutableLiveData<List<Int>>()
-        var seekLiveData = object : ListLiveData() {
-            override fun loadData(bundle: Bundle?, paging: Paging, loadType: LoadType): List<DataItem>? {
+        val listLiveData = object : ListLiveData<ReadDay>() {
+            override fun getData(loadParams: LoadParams): List<ReadDay>? {
+                return getDatas()
+            }
+        }
+        var seekLiveData = object : ListLiveData<SeekIndex>() {
+            override fun getData(loadParams: LoadParams): List<SeekIndex>? {
                 return getMonths()
             }
         }
 
-        override fun loadListData(bundle: Bundle?, paging: Paging, loadType: LoadType): List<ReadDay>? {
-            return getDatas()
+        override fun loadData(bundle: Bundle?) {
+            listLiveData.loadStart()
         }
 
+
         fun findIndexByMonth(month: Int): Int {
-            listLiveData.value?.data?.forEachIndexed { index, dataItem ->
-                if ((dataItem is ReadDay) && dataItem.month == month) {
+            listLiveData.value?.items?.forEachIndexed { index, dataItem ->
+                if ((dataItem.data is ReadDay) && dataItem.data?.month == month) {
                     return index
                 }
             }
